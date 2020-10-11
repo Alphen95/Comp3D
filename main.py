@@ -29,7 +29,13 @@ sc = pygame.display.set_mode((infoObject.current_w, SIZE*300),pygame.FULLSCREEN)
 indent_horizontal = int((infoObject.current_w - SIZE*300) / 2)
 health = 100
 ammo = 0
-font = pygame.font.Font("pixel_font.ttf", 72)
+font = pygame.font.Font("pixel_font.ttf", 72) 
+
+def refresh(left,middle,right,hp,ammo,state,wpn):
+    sc.fill(BLACK)
+    drawScreen(left,middle,right)
+    drawWeapon(state,wpn)
+    drawHUD(hp,ammo,"uwu")   
  
 def drawScreen(left,middle,right):
     if left == "wall":
@@ -505,54 +511,98 @@ ready_to_refresh = True
 todo = "nothing"
 count = 0
 last_key = "uwu"
+current_weapon = "fist"
+weapon_action = "idle"
+screen = 0
+ticks_from_last_act = 0
 
 while 1:
     if ready_to_refresh:
         if last_key == "up":
             screen = randint(0,6)
             if screen == 0 or screen == 1 or screen == 5:
-                drawScreen("wall","","wall")
+                refresh("wall"," ","wall",health,ammo,weapon_action,current_weapon)
             elif screen == 2:
-                drawScreen("","","wall")
+                refresh(" ","","wall",health,ammo,weapon_action,current_weapon)
             elif screen == 3:
-                drawScreen("wall","","")
+                refresh("wall"," "," ",health,ammo,weapon_action,current_weapon)
             elif screen == 4:
-                drawScreen("wall","enemy1","wall")
+                refresh("wall","enemy1","wall",health,ammo,weapon_action,current_weapon)
                 health = health- 5
-                ready_to_refresh = False
-                todo = "kill_middle_enemy1"
             elif screen == 6:
-                drawScreen("wall","medkit","wall")
+                refresh("wall","medkit","wall",health,ammo,weapon_action,current_weapon)
                 health = health + 10
                 if health > 100:
-                    health = 100 
+                    health = 100
+        elif last_key == "space":
+            ticks_from_last_act = 0
+            if screen == 4:
+                todo = "kill_middle_enemy1"
+                weapon_action = "attack"
+                ready_to_refresh = False
+            else:
+                weapon_action = "attack"
             
     else:
-        sc.fill(BLACK)
-        if "kill" in todo:
+        pass
+        if "kill" in todo:            
             if "enemy1" in todo:
                 if "middle" in todo:
                     if count == 0:
-                        drawScreen("wall","enemy1_corpse_0","wall")
+                        refresh("wall","enemy1_corpse_0","wall",health,ammo,weapon_action,current_weapon)
                     elif count == 1:
-                        drawScreen("wall","enemy1_corpse_1","wall")
+                        refresh("wall","enemy1_corpse_1","wall",health,ammo,weapon_action,current_weapon)
                     elif count == 2:
-                        drawScreen("wall","enemy1_corpse_2","wall")
+                        refresh("wall","enemy1_corpse_2","wall",health,ammo,weapon_action,current_weapon)
                     elif count == 3:
-                        drawScreen("wall","enemy1_corpse_3","wall")
+                        refresh("wall","enemy1_corpse_3","wall",health,ammo,weapon_action,current_weapon)
                         count = -1
                         todo = ""
                         ready_to_refresh = True
-                    count += 1    
-    drawWeapon("idle","fist")
+                    count += 1
+    if ready_to_refresh:
+        if screen == 0 or screen == 1 or screen == 5:
+            refresh("wall"," ","wall",health,ammo,weapon_action,current_weapon)
+        elif screen == 2:
+            refresh(" ","","wall",health,ammo,weapon_action,current_weapon)
+        elif screen == 3:
+            refresh("wall"," "," ",health,ammo,weapon_action,current_weapon)
+        elif screen == 4:
+            refresh("wall","enemy1","wall",health,ammo,weapon_action,current_weapon)
+            health = health- 5
+        elif screen == 6:
+            refresh("wall","medkit","wall",health,ammo,weapon_action,current_weapon)
+            
+    else:
+        if "kill" in todo:            
+            if "enemy1" in todo:
+                if "middle" in todo:
+                    if count == 0:
+                        refresh("wall","enemy1_corpse_0","wall",health,ammo,weapon_action,current_weapon)
+                    elif count == 1:
+                        refresh("wall","enemy1_corpse_1","wall",health,ammo,weapon_action,current_weapon)
+                    elif count == 2:
+                        refresh("wall","enemy1_corpse_2","wall",health,ammo,weapon_action,current_weapon)
+                    elif count == 3:
+                        refresh("wall","enemy1_corpse_3","wall",health,ammo,weapon_action,current_weapon)
+                        count = -1
+                        todo = ""
+                        screen = randint(0,6)
+                        ready_to_refresh = True
+                    count += 1
     drawHUD(health,ammo,"1")
     pygame.display.update()
     pygame.time.delay(500)
     last_key = ""
+    if weapon_action == "attack" and ticks_from_last_act == 1:
+        weapon_action = "idle"     
+    ticks_from_last_act +=1
     for i in pygame.event.get():
         if i.type == pygame.QUIT: exit()
         elif i.type == pygame.KEYDOWN:
             if i.key == pygame.K_q: exit()
             elif i.key == pygame.K_UP: 
                 last_key = "up"
-                sc.fill(BLACK)
+                print("cleared")
+            elif i.key == pygame.K_SPACE:
+                last_key = "space"
