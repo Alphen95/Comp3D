@@ -501,31 +501,34 @@ def drawHUD(hp,ammo,lastact):
     sc.blit(hp_text_low, [SIZE*25+indent_horizontal,SIZE*275])
     sc.blit(ammo_text_low, [SIZE*205+indent_horizontal,SIZE*275])    
 
-state = 0
 ready_to_refresh = True
 todo = "nothing"
 count = 0
+last_key = "uwu"
 
 while 1:
     if ready_to_refresh:
-        screen = randint(0,6)
-        if screen == 0 or screen == 1 or screen == 5:
-            drawScreen("wall","","wall")
-        elif screen == 2:
-            drawScreen("","","wall")
-        elif screen == 3:
-            drawScreen("wall","","")
-        elif screen == 4:
-            drawScreen("wall","enemy1","wall")
-            health = health- 5
-            ready_to_refresh = False
-            todo = "kill_middle_enemy1"
-        elif screen == 6:
-            drawScreen("wall","medkit","wall")
-            health = health + 10
-            if health > 100:
-                health = 100
+        if last_key == "up":
+            screen = randint(0,6)
+            if screen == 0 or screen == 1 or screen == 5:
+                drawScreen("wall","","wall")
+            elif screen == 2:
+                drawScreen("","","wall")
+            elif screen == 3:
+                drawScreen("wall","","")
+            elif screen == 4:
+                drawScreen("wall","enemy1","wall")
+                health = health- 5
+                ready_to_refresh = False
+                todo = "kill_middle_enemy1"
+            elif screen == 6:
+                drawScreen("wall","medkit","wall")
+                health = health + 10
+                if health > 100:
+                    health = 100 
+            
     else:
+        sc.fill(BLACK)
         if "kill" in todo:
             if "enemy1" in todo:
                 if "middle" in todo:
@@ -545,8 +548,11 @@ while 1:
     drawHUD(health,ammo,"1")
     pygame.display.update()
     pygame.time.delay(500)
+    last_key = ""
     for i in pygame.event.get():
         if i.type == pygame.QUIT: exit()
         elif i.type == pygame.KEYDOWN:
             if i.key == pygame.K_q: exit()
-    sc.fill(BLACK)
+            elif i.key == pygame.K_UP: 
+                last_key = "up"
+                sc.fill(BLACK)
