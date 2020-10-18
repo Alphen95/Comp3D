@@ -899,7 +899,7 @@ while 1:
         
         elif mode == "game_over":
             mode = "game"
-            health = 10
+            health = 100
             ammo = 5
             x = 3
             y = 1
@@ -931,12 +931,14 @@ while 1:
                 leveldict = leveldict_new.copy()
                 x = 3
                 y = 1
+                health = 100
+                ammo = 5                
             screen = 0
             opton = 0
             mode = "game"
         elif mode == "title":
             mode = "game"
-            health = 10
+            health = 100
             ammo = 5
             x = 3
             y = 1
@@ -958,7 +960,7 @@ while 1:
         sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 5])
         text = font.render("[Enter] to quit to tilte.", 1, RED)
         sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 25])
-        text = font.render("[Space] to quit respawn.", 1, RED)
+        text = font.render("[Space] to respawn.", 1, RED)
         sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 45])
     elif mode == "title":
         sc.fill(BLACK)
