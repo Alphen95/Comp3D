@@ -21,6 +21,8 @@ BROWN = (87, 39, 3)
 LIGHTYELLOW = (214, 207, 148)
 MAGENTA = (179, 62, 181)
 BLUE = (0, 0, 130)
+DARK_MAGENTA = (74, 4, 74)
+DARK_GRAY = (33, 33, 33)
 SIZE = 3
 health = 0
 
@@ -45,6 +47,7 @@ ammo = 0
 mode = "title"
 screen = 0
 option = 0
+tick = 0
 
 font = pygame.font.Font("pixel_font.ttf", 72)
 
@@ -77,7 +80,50 @@ def refresh(left, middle, right, hp, ammo, state, wpn):
     drawScreen(left, middle, right)
     drawWeapon(state, wpn)
     drawHUD(hp, ammo, "uwu")
-
+    
+def generate_chunk():
+    chunk_id = randint(0, 3)
+    if chunk_id == 0:
+        chunk = {
+            "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
+            "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
+            "3-1": "", "3-2": "wall", "3-3": "wall", "3-4": "wall", "3-5": "wall",
+            "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
+            "5-1": "", "5-2": "", "5-3": "enemy1", "5-4": "wall", "5-5": "",
+            "6-1": "", "6-2": "bullets", "6-3": "bullets", "6-4": "wall", "6-5": "",
+            "7-1": "wall", "7-2": "wall", "7-3": "wall", "7-4": "wall", "7-5": "", "health_enemy": 10
+        }
+    elif chunk_id == 1:
+        chunk = {
+            "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
+            "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
+            "3-1": "", "3-2": "", "3-3": "enemy1", "3-4": "", "3-5": "",
+            "4-1": "", "4-2": "wall", "4-3": "wall", "4-4": "wall", "4-5": "",
+            "5-1": "", "5-2": "", "5-3": "medkit", "5-4": "", "5-5": "",
+            "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
+            "7-1": "wall", "7-2": "wall", "7-3": "", "7-4": "wall", "7-5": "wall", "health_enemy": 10
+        }
+    elif chunk_id == 2:
+        chunk = {
+            "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
+            "2-1": "wall", "2-2": "", "2-3": "", "2-4": "", "2-5": "wall",
+            "3-1": "", "3-2": "", "3-3": "", "3-4": "", "3-5": "",
+            "4-1": "", "4-2": "wall", "4-3": "wall", "4-4": "wall", "4-5": "",
+            "5-1": "", "5-2": "bullets", "5-3": "", "5-4": "medkit", "5-5": "",
+            "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
+            "7-1": "", "7-2": "", "7-3": "", "7-4": "", "7-5": ""
+        }
+    elif chunk_id == 3:
+        chunk = {
+            "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
+            "2-1": "wall", "2-2": "", "2-3": "", "2-4": "", "2-5": "wall",
+            "3-1": "wall", "3-2": "wall", "3-3": "", "3-4": "wall", "3-5": "wall",
+            "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
+            "5-1": "", "5-2": "", "5-3": "boss", "5-4": "", "5-5": "",
+            "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
+            "7-1": "", "7-2": "", "7-3": "", "7-4": "", "7-5": "", "health_enemy": 25
+        }
+    return chunk
 
 def look(x, y, direction, lvldict):
     left = ""
@@ -379,7 +425,89 @@ def drawScreen(left, middle, right):
         pygame.draw.polygon(sc, BLACK, [[SIZE * 15 + indent_horizontal, SIZE * 215], [SIZE * 85 + indent_horizontal, SIZE * 215], [SIZE * 85 + indent_horizontal, SIZE * 285], [SIZE * 15 + indent_horizontal, SIZE * 285]])
         pygame.draw.polygon(sc, GRAY, [[SIZE * 20 + indent_horizontal, SIZE * 230], [SIZE * 43 + indent_horizontal, SIZE * 218], [SIZE * 69 + indent_horizontal, SIZE * 245], [SIZE * 60 + indent_horizontal, SIZE * 250], [SIZE * 80 + indent_horizontal, SIZE * 265], [SIZE * 76 + indent_horizontal, SIZE * 272], [SIZE * 54 + indent_horizontal, SIZE * 280], [SIZE * 60 + indent_horizontal, SIZE * 262], [SIZE * 50 + indent_horizontal, SIZE * 280], [SIZE * 20 + indent_horizontal, SIZE * 249]])
         pygame.draw.polygon(sc, MAGENTA, [[SIZE * 69 + indent_horizontal, SIZE * 245], [SIZE * 69 + indent_horizontal, SIZE * 300], [SIZE * 20 + indent_horizontal, SIZE * 300], [SIZE * 20 + indent_horizontal, SIZE * 249]])
-
+    elif left == "boss":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 95], [SIZE * 5 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 15 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 85], [SIZE * 15 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 60 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 55 + indent_horizontal, SIZE * 40], [SIZE * 75 + indent_horizontal, SIZE * 35], [SIZE * 75 + indent_horizontal, SIZE * 25], [SIZE * 55 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 35 + indent_horizontal, SIZE * 65], [SIZE * 45 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 70], [SIZE * 65 + indent_horizontal, SIZE * 65], [SIZE * 65 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 75], [SIZE * 45 + indent_horizontal, SIZE * 75], [SIZE * 35 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 80 + indent_horizontal, SIZE * 5], [SIZE * 39 + indent_horizontal, SIZE * 56], [SIZE * 26 + indent_horizontal, SIZE * 56], [SIZE * 5 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 30 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 25 + indent_horizontal, SIZE * 25], [SIZE * 45 + indent_horizontal, SIZE * 30], [SIZE * 45 + indent_horizontal, SIZE * 40], [SIZE * 25 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 60 + indent_horizontal, SIZE * 95], [SIZE * 60 + indent_horizontal, SIZE * 115], [SIZE * 75 + indent_horizontal, SIZE * 125], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 125], [SIZE * 40 + indent_horizontal, SIZE * 115], [SIZE * 40 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 25 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 40 + indent_horizontal, SIZE * 200], [SIZE * 40 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 60 + indent_horizontal, SIZE * 200], [SIZE * 60 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 200]])
+        # heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 25 + indent_horizontal, SIZE * 155], [SIZE * 35 + indent_horizontal, SIZE * 145], [SIZE * 65 + indent_horizontal, SIZE * 145], [SIZE * 75 + indent_horizontal, SIZE * 155], [SIZE * 75 + indent_horizontal, SIZE * 165], [SIZE * 65 + indent_horizontal, SIZE * 175], [SIZE * 35 + indent_horizontal, SIZE * 175], [SIZE * 25 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 40 + indent_horizontal, SIZE * 150], [SIZE * 45 + indent_horizontal, SIZE * 150], [SIZE * 50 + indent_horizontal, SIZE * 155], [SIZE * 55 + indent_horizontal, SIZE * 150], [SIZE * 60 + indent_horizontal, SIZE * 150], [SIZE * 60 + indent_horizontal, SIZE * 160], [SIZE * 55 + indent_horizontal, SIZE * 160], [SIZE * 50 + indent_horizontal, SIZE * 165], [SIZE * 45 + indent_horizontal, SIZE * 160], [SIZE * 40 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 135], [SIZE * 20 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 10 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 125], [SIZE * 10 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 15 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 120], [SIZE * 15 + indent_horizontal, SIZE * 120]])
+    elif left == "boss_corpse_0":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 95], [SIZE * 5 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 15 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 85], [SIZE * 15 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 60 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 55 + indent_horizontal, SIZE * 40], [SIZE * 75 + indent_horizontal, SIZE * 35], [SIZE * 75 + indent_horizontal, SIZE * 25], [SIZE * 55 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 35 + indent_horizontal, SIZE * 65], [SIZE * 45 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 70], [SIZE * 65 + indent_horizontal, SIZE * 65], [SIZE * 65 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 75], [SIZE * 45 + indent_horizontal, SIZE * 75], [SIZE * 35 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 80 + indent_horizontal, SIZE * 5], [SIZE * 39 + indent_horizontal, SIZE * 56], [SIZE * 26 + indent_horizontal, SIZE * 56], [SIZE * 5 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 30 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 25 + indent_horizontal, SIZE * 25], [SIZE * 45 + indent_horizontal, SIZE * 30], [SIZE * 45 + indent_horizontal, SIZE * 40], [SIZE * 25 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 60 + indent_horizontal, SIZE * 95], [SIZE * 60 + indent_horizontal, SIZE * 115], [SIZE * 75 + indent_horizontal, SIZE * 125], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 125], [SIZE * 40 + indent_horizontal, SIZE * 115], [SIZE * 40 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 25 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 40 + indent_horizontal, SIZE * 200], [SIZE * 40 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 60 + indent_horizontal, SIZE * 200], [SIZE * 60 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 25 + indent_horizontal, SIZE * 155], [SIZE * 35 + indent_horizontal, SIZE * 145], [SIZE * 65 + indent_horizontal, SIZE * 145], [SIZE * 75 + indent_horizontal, SIZE * 155], [SIZE * 75 + indent_horizontal, SIZE * 165], [SIZE * 65 + indent_horizontal, SIZE * 175], [SIZE * 35 + indent_horizontal, SIZE * 175], [SIZE * 25 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 35 + indent_horizontal, SIZE * 150], [SIZE * 40 + indent_horizontal, SIZE * 150], [SIZE * 45 + indent_horizontal, SIZE * 155], [SIZE * 45 + indent_horizontal, SIZE * 165], [SIZE * 40 + indent_horizontal, SIZE * 160], [SIZE * 35 + indent_horizontal, SIZE * 160]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 65 + indent_horizontal, SIZE * 150], [SIZE * 60 + indent_horizontal, SIZE * 150], [SIZE * 55 + indent_horizontal, SIZE * 155], [SIZE * 55 + indent_horizontal, SIZE * 165], [SIZE * 60 + indent_horizontal, SIZE * 160], [SIZE * 65 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 135], [SIZE * 20 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 10 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 125], [SIZE * 10 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 15 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 120], [SIZE * 15 + indent_horizontal, SIZE * 120]])
+    elif left == "boss_corpse_1":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 5], [SIZE * 95 + indent_horizontal, SIZE * 95], [SIZE * 5 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 15 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 15], [SIZE * 85 + indent_horizontal, SIZE * 85], [SIZE * 15 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 60 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 55 + indent_horizontal, SIZE * 40], [SIZE * 75 + indent_horizontal, SIZE * 35], [SIZE * 75 + indent_horizontal, SIZE * 25], [SIZE * 55 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 35 + indent_horizontal, SIZE * 65], [SIZE * 45 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 70], [SIZE * 65 + indent_horizontal, SIZE * 65], [SIZE * 65 + indent_horizontal, SIZE * 70], [SIZE * 55 + indent_horizontal, SIZE * 75], [SIZE * 45 + indent_horizontal, SIZE * 75], [SIZE * 35 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 5 + indent_horizontal, SIZE * 5], [SIZE * 80 + indent_horizontal, SIZE * 5], [SIZE * 39 + indent_horizontal, SIZE * 56], [SIZE * 26 + indent_horizontal, SIZE * 56], [SIZE * 5 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 30 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 25 + indent_horizontal, SIZE * 25], [SIZE * 45 + indent_horizontal, SIZE * 30], [SIZE * 45 + indent_horizontal, SIZE * 40], [SIZE * 25 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 60 + indent_horizontal, SIZE * 95], [SIZE * 60 + indent_horizontal, SIZE * 115], [SIZE * 75 + indent_horizontal, SIZE * 125], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 125], [SIZE * 40 + indent_horizontal, SIZE * 115], [SIZE * 40 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 25 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 200], [SIZE * 75 + indent_horizontal, SIZE * 220], [SIZE * 25 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 40 + indent_horizontal, SIZE * 200], [SIZE * 40 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 280], [SIZE * 30 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 60 + indent_horizontal, SIZE * 200], [SIZE * 60 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 280], [SIZE * 70 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 25 + indent_horizontal, SIZE * 155], [SIZE * 35 + indent_horizontal, SIZE * 145], [SIZE * 65 + indent_horizontal, SIZE * 145], [SIZE * 75 + indent_horizontal, SIZE * 155], [SIZE * 75 + indent_horizontal, SIZE * 165], [SIZE * 65 + indent_horizontal, SIZE * 175], [SIZE * 35 + indent_horizontal, SIZE * 175], [SIZE * 25 + indent_horizontal, SIZE * 165]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 70 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 125], [SIZE * 80 + indent_horizontal, SIZE * 180], [SIZE * 70 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 160], [SIZE * 20 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 20 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 125], [SIZE * 30 + indent_horizontal, SIZE * 135], [SIZE * 20 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 10 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 95], [SIZE * 40 + indent_horizontal, SIZE * 125], [SIZE * 10 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 15 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 100], [SIZE * 35 + indent_horizontal, SIZE * 120], [SIZE * 15 + indent_horizontal, SIZE * 120]])     
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 25 + indent_horizontal, SIZE * 125], [SIZE * 35 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 75 + indent_horizontal, SIZE * 125], [SIZE * 65 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 25 + indent_horizontal, SIZE * 175], [SIZE * 35 + indent_horizontal, SIZE * 165]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 75 + indent_horizontal, SIZE * 175], [SIZE * 65 + indent_horizontal, SIZE * 165]], 10)        
+    elif left == "boss_corpse_2":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 5 + indent_horizontal, SIZE * 205], [SIZE * 95 + indent_horizontal, SIZE * 205], [SIZE * 95 + indent_horizontal, SIZE * 295], [SIZE * 5 + indent_horizontal, SIZE * 295]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 15 + indent_horizontal, SIZE * 215], [SIZE * 85 + indent_horizontal, SIZE * 215], [SIZE * 85 + indent_horizontal, SIZE * 285], [SIZE * 15 + indent_horizontal, SIZE * 285]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 5 + indent_horizontal, SIZE * 205], [SIZE * 80 + indent_horizontal, SIZE * 205], [SIZE * 39 + indent_horizontal, SIZE * 256], [SIZE * 26 + indent_horizontal, SIZE * 256], [SIZE * 5 + indent_horizontal, SIZE * 239]])
     if right == "wall":
         pygame.draw.polygon(sc, NAVY, [[SIZE * 300 + indent_horizontal, SIZE * 0], [SIZE * 200 + indent_horizontal, SIZE * 100], [SIZE * 200 + indent_horizontal, SIZE * 200], [SIZE * 300 + indent_horizontal, SIZE * 300]])
         pygame.draw.lines(sc, WHITE, True, [[SIZE * 298 + indent_horizontal, SIZE * 5], [SIZE * 203 + indent_horizontal, SIZE * 102], [SIZE * 203 + indent_horizontal, SIZE * 197], [SIZE * 298 + indent_horizontal, SIZE * 295]], 3)
@@ -390,8 +518,7 @@ def drawScreen(left, middle, right):
         pygame.draw.polygon(sc, LIGHTYELLOW, [[SIZE * 235 + indent_horizontal, SIZE * 135], [SIZE * 240 + indent_horizontal, SIZE * 130], [SIZE * 245 + indent_horizontal, SIZE * 135], [SIZE * 245 + indent_horizontal, SIZE * 160], [SIZE * 235 + indent_horizontal, SIZE * 160]])
         pygame.draw.polygon(sc, LIGHTYELLOW, [[SIZE * 255 + indent_horizontal, SIZE * 135], [SIZE * 260 + indent_horizontal, SIZE * 130], [SIZE * 265 + indent_horizontal, SIZE * 135], [SIZE * 265 + indent_horizontal, SIZE * 160], [SIZE * 255 + indent_horizontal, SIZE * 160]])
         pygame.draw.lines(sc, YELLOW, True, [[SIZE * 235 + indent_horizontal, SIZE * 137], [SIZE * 245 + indent_horizontal, SIZE * 137]], 5)
-        pygame.draw.lines(sc, YELLOW, True, [[SIZE * 255 + indent_horizontal, SIZE * 137], [SIZE * 265 + indent_horizontal, SIZE * 137]], 5)
-
+        pygame.draw.lines(sc, YELLOW, True, [[SIZE * 255 + indent_horizontal, SIZE * 137], [SIZE * 265 + indent_horizontal, SIZE * 137]], 5)    
     elif right == "medkit":
         pygame.draw.polygon(sc, MEDKIT, [[SIZE * 210 + indent_horizontal, SIZE * 110], [SIZE * 290 + indent_horizontal, SIZE * 110], [SIZE * 290 + indent_horizontal, SIZE * 190], [SIZE * 210 + indent_horizontal, SIZE * 190]])
         pygame.draw.rect(sc, WHITE, (SIZE * 211 + indent_horizontal, SIZE * 110, SIZE * 78, SIZE * 15), 8)
@@ -533,6 +660,89 @@ def drawScreen(left, middle, right):
         pygame.draw.polygon(sc, BLACK, [[SIZE * 215 + indent_horizontal, SIZE * 215], [SIZE * 285 + indent_horizontal, SIZE * 215], [SIZE * 285 + indent_horizontal, SIZE * 285], [SIZE * 215 + indent_horizontal, SIZE * 285]])
         pygame.draw.polygon(sc, GRAY, [[SIZE * 220 + indent_horizontal, SIZE * 230], [SIZE * 243 + indent_horizontal, SIZE * 218], [SIZE * 269 + indent_horizontal, SIZE * 245], [SIZE * 260 + indent_horizontal, SIZE * 250], [SIZE * 280 + indent_horizontal, SIZE * 265], [SIZE * 276 + indent_horizontal, SIZE * 272], [SIZE * 254 + indent_horizontal, SIZE * 280], [SIZE * 260 + indent_horizontal, SIZE * 262], [SIZE * 250 + indent_horizontal, SIZE * 280], [SIZE * 220 + indent_horizontal, SIZE * 249]])
         pygame.draw.polygon(sc, MAGENTA, [[SIZE * 269 + indent_horizontal, SIZE * 245], [SIZE * 269 + indent_horizontal, SIZE * 300], [SIZE * 220 + indent_horizontal, SIZE * 300], [SIZE * 220 + indent_horizontal, SIZE * 249]])
+    elif right == "boss":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 95], [SIZE * 205 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 215 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 85], [SIZE * 215 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 260 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 255 + indent_horizontal, SIZE * 40], [SIZE * 275 + indent_horizontal, SIZE * 35], [SIZE * 275 + indent_horizontal, SIZE * 25], [SIZE * 255 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 235 + indent_horizontal, SIZE * 65], [SIZE * 245 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 70], [SIZE * 265 + indent_horizontal, SIZE * 65], [SIZE * 265 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 75], [SIZE * 245 + indent_horizontal, SIZE * 75], [SIZE * 235 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 280 + indent_horizontal, SIZE * 5], [SIZE * 239 + indent_horizontal, SIZE * 56], [SIZE * 226 + indent_horizontal, SIZE * 56], [SIZE * 205 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 230 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 225 + indent_horizontal, SIZE * 25], [SIZE * 245 + indent_horizontal, SIZE * 30], [SIZE * 245 + indent_horizontal, SIZE * 40], [SIZE * 225 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 260 + indent_horizontal, SIZE * 95], [SIZE * 260 + indent_horizontal, SIZE * 115], [SIZE * 275 + indent_horizontal, SIZE * 125], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 125], [SIZE * 240 + indent_horizontal, SIZE * 115], [SIZE * 240 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 225 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 240 + indent_horizontal, SIZE * 200], [SIZE * 240 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 260 + indent_horizontal, SIZE * 200], [SIZE * 260 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 200]])
+        # heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 225 + indent_horizontal, SIZE * 155], [SIZE * 235 + indent_horizontal, SIZE * 145], [SIZE * 265 + indent_horizontal, SIZE * 145], [SIZE * 275 + indent_horizontal, SIZE * 155], [SIZE * 275 + indent_horizontal, SIZE * 165], [SIZE * 265 + indent_horizontal, SIZE * 175], [SIZE * 235 + indent_horizontal, SIZE * 175], [SIZE * 225 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 240 + indent_horizontal, SIZE * 150], [SIZE * 245 + indent_horizontal, SIZE * 150], [SIZE * 250 + indent_horizontal, SIZE * 155], [SIZE * 255 + indent_horizontal, SIZE * 150], [SIZE * 260 + indent_horizontal, SIZE * 150], [SIZE * 260 + indent_horizontal, SIZE * 160], [SIZE * 255 + indent_horizontal, SIZE * 160], [SIZE * 250 + indent_horizontal, SIZE * 165], [SIZE * 245 + indent_horizontal, SIZE * 160], [SIZE * 240 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 135], [SIZE * 220 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 210 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 125], [SIZE * 210 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 215 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 120], [SIZE * 215 + indent_horizontal, SIZE * 120]])
+    elif right == "boss_corpse_0":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 95], [SIZE * 205 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 215 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 85], [SIZE * 215 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 260 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 255 + indent_horizontal, SIZE * 40], [SIZE * 275 + indent_horizontal, SIZE * 35], [SIZE * 275 + indent_horizontal, SIZE * 25], [SIZE * 255 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 235 + indent_horizontal, SIZE * 65], [SIZE * 245 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 70], [SIZE * 265 + indent_horizontal, SIZE * 65], [SIZE * 265 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 75], [SIZE * 245 + indent_horizontal, SIZE * 75], [SIZE * 235 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 280 + indent_horizontal, SIZE * 5], [SIZE * 239 + indent_horizontal, SIZE * 56], [SIZE * 226 + indent_horizontal, SIZE * 56], [SIZE * 205 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 230 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 225 + indent_horizontal, SIZE * 25], [SIZE * 245 + indent_horizontal, SIZE * 30], [SIZE * 245 + indent_horizontal, SIZE * 40], [SIZE * 225 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 260 + indent_horizontal, SIZE * 95], [SIZE * 260 + indent_horizontal, SIZE * 115], [SIZE * 275 + indent_horizontal, SIZE * 125], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 125], [SIZE * 240 + indent_horizontal, SIZE * 115], [SIZE * 240 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 225 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 240 + indent_horizontal, SIZE * 200], [SIZE * 240 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 260 + indent_horizontal, SIZE * 200], [SIZE * 260 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 225 + indent_horizontal, SIZE * 155], [SIZE * 235 + indent_horizontal, SIZE * 145], [SIZE * 265 + indent_horizontal, SIZE * 145], [SIZE * 275 + indent_horizontal, SIZE * 155], [SIZE * 275 + indent_horizontal, SIZE * 165], [SIZE * 265 + indent_horizontal, SIZE * 175], [SIZE * 235 + indent_horizontal, SIZE * 175], [SIZE * 225 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 235 + indent_horizontal, SIZE * 150], [SIZE * 240 + indent_horizontal, SIZE * 150], [SIZE * 245 + indent_horizontal, SIZE * 155], [SIZE * 245 + indent_horizontal, SIZE * 165], [SIZE * 240 + indent_horizontal, SIZE * 160], [SIZE * 235 + indent_horizontal, SIZE * 160]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 265 + indent_horizontal, SIZE * 150], [SIZE * 260 + indent_horizontal, SIZE * 150], [SIZE * 255 + indent_horizontal, SIZE * 155], [SIZE * 255 + indent_horizontal, SIZE * 165], [SIZE * 260 + indent_horizontal, SIZE * 160], [SIZE * 265 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 320 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 135], [SIZE * 220 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 210 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 125], [SIZE * 210 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 215 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 120], [SIZE * 215 + indent_horizontal, SIZE * 120]])
+    elif right == "boss_corpse_1":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 5], [SIZE * 295 + indent_horizontal, SIZE * 95], [SIZE * 205 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 215 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 15], [SIZE * 285 + indent_horizontal, SIZE * 85], [SIZE * 215 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 260 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 255 + indent_horizontal, SIZE * 40], [SIZE * 275 + indent_horizontal, SIZE * 35], [SIZE * 275 + indent_horizontal, SIZE * 25], [SIZE * 255 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 235 + indent_horizontal, SIZE * 65], [SIZE * 245 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 70], [SIZE * 265 + indent_horizontal, SIZE * 65], [SIZE * 265 + indent_horizontal, SIZE * 70], [SIZE * 255 + indent_horizontal, SIZE * 75], [SIZE * 245 + indent_horizontal, SIZE * 75], [SIZE * 235 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 205 + indent_horizontal, SIZE * 5], [SIZE * 280 + indent_horizontal, SIZE * 5], [SIZE * 239 + indent_horizontal, SIZE * 56], [SIZE * 226 + indent_horizontal, SIZE * 56], [SIZE * 205 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 30 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 225 + indent_horizontal, SIZE * 25], [SIZE * 245 + indent_horizontal, SIZE * 30], [SIZE * 245 + indent_horizontal, SIZE * 40], [SIZE * 225 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 260 + indent_horizontal, SIZE * 95], [SIZE * 260 + indent_horizontal, SIZE * 115], [SIZE * 275 + indent_horizontal, SIZE * 125], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 125], [SIZE * 240 + indent_horizontal, SIZE * 115], [SIZE * 240 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 225 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 200], [SIZE * 275 + indent_horizontal, SIZE * 220], [SIZE * 225 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 240 + indent_horizontal, SIZE * 200], [SIZE * 240 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 280], [SIZE * 230 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 260 + indent_horizontal, SIZE * 200], [SIZE * 260 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 280], [SIZE * 270 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 225 + indent_horizontal, SIZE * 155], [SIZE * 235 + indent_horizontal, SIZE * 145], [SIZE * 265 + indent_horizontal, SIZE * 145], [SIZE * 275 + indent_horizontal, SIZE * 155], [SIZE * 275 + indent_horizontal, SIZE * 165], [SIZE * 265 + indent_horizontal, SIZE * 175], [SIZE * 235 + indent_horizontal, SIZE * 175], [SIZE * 225 + indent_horizontal, SIZE * 165]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 270 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 125], [SIZE * 280 + indent_horizontal, SIZE * 180], [SIZE * 270 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 160], [SIZE * 220 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 220 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 125], [SIZE * 230 + indent_horizontal, SIZE * 135], [SIZE * 220 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 210 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 95], [SIZE * 240 + indent_horizontal, SIZE * 125], [SIZE * 210 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 215 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 100], [SIZE * 235 + indent_horizontal, SIZE * 120], [SIZE * 215 + indent_horizontal, SIZE * 120]])
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 225 + indent_horizontal, SIZE * 125], [SIZE * 235 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 275 + indent_horizontal, SIZE * 125], [SIZE * 265 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 225 + indent_horizontal, SIZE * 175], [SIZE * 235 + indent_horizontal, SIZE * 165]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 75 + indent_horizontal, SIZE * 175], [SIZE * 265 + indent_horizontal, SIZE * 165]], 10)
+    elif right == "boss_corpse_2":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 205 + indent_horizontal, SIZE * 205], [SIZE * 295 + indent_horizontal, SIZE * 205], [SIZE * 295 + indent_horizontal, SIZE * 295], [SIZE * 205 + indent_horizontal, SIZE * 295]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 215 + indent_horizontal, SIZE * 215], [SIZE * 285 + indent_horizontal, SIZE * 215], [SIZE * 285 + indent_horizontal, SIZE * 285], [SIZE * 215 + indent_horizontal, SIZE * 285]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 205 + indent_horizontal, SIZE * 205], [SIZE * 280 + indent_horizontal, SIZE * 205], [SIZE * 239 + indent_horizontal, SIZE * 256], [SIZE * 226 + indent_horizontal, SIZE * 256], [SIZE * 205 + indent_horizontal, SIZE * 239]])
     if middle == "wall2" or middle == "wall":
         pygame.draw.polygon(sc, NAVY, [[SIZE * 100 + indent_horizontal, SIZE * 100], [SIZE * 200 + indent_horizontal, SIZE * 100], [SIZE * 200 + indent_horizontal, SIZE * 200], [SIZE * 100 + indent_horizontal, SIZE * 200]])
         pygame.draw.lines(sc, WHITE, True, [[SIZE * 105 + indent_horizontal, SIZE * 105], [SIZE * 195 + indent_horizontal, SIZE * 105], [SIZE * 195 + indent_horizontal, SIZE * 195], [SIZE * 105 + indent_horizontal, SIZE * 195]], 3)
@@ -639,6 +849,139 @@ def drawScreen(left, middle, right):
         pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 160], [SIZE * 170 + indent_horizontal, SIZE * 160]], 2)
         pygame.draw.polygon(sc, BROWN, [[SIZE * 170 + indent_horizontal, SIZE * 145], [SIZE * 180 + indent_horizontal, SIZE * 145], [SIZE * 180 + indent_horizontal, SIZE * 165], [SIZE * 170 + indent_horizontal, SIZE * 165]])
         pygame.draw.polygon(sc, YELLOW, [[SIZE * 172 + indent_horizontal, SIZE * 147], [SIZE * 178 + indent_horizontal, SIZE * 147], [SIZE * 178 + indent_horizontal, SIZE * 153], [SIZE * 172 + indent_horizontal, SIZE * 153]])
+    elif middle == "enemy2_corpse_0":
+        pygame.draw.polygon(sc, YELLOW, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 95], [SIZE * 105 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLUE, [[SIZE * 115 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 85], [SIZE * 115 + indent_horizontal, SIZE * 85]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 135 + indent_horizontal, SIZE * 25], [SIZE * 165 + indent_horizontal, SIZE * 25]], 15)
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 35], [SIZE * 180 + indent_horizontal, SIZE * 35]], 10)
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 45], [SIZE * 180 + indent_horizontal, SIZE * 45]], 10)
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 95], [SIZE * 160 + indent_horizontal, SIZE * 115], [SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 140 + indent_horizontal, SIZE * 115], [SIZE * 140 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 200], [SIZE * 140 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 200], [SIZE * 160 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 200]])
+        # hand left(gun) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 190 + indent_horizontal, SIZE * 160], [SIZE * 180 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 190 + indent_horizontal, SIZE * 160], [SIZE * 180 + indent_horizontal, SIZE * 160]], 2)
+        # hand right(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 180], [SIZE * 120 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 180], [SIZE * 120 + indent_horizontal, SIZE * 180]], 2)
+    elif middle == "enemy2_corpse_1":
+        pygame.draw.polygon(sc, YELLOW, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 95], [SIZE * 105 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 85], [SIZE * 115 + indent_horizontal, SIZE * 85]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 120 + indent_horizontal, SIZE * 30], [SIZE * 143 + indent_horizontal, SIZE * 18], [SIZE * 169 + indent_horizontal, SIZE * 45], [SIZE * 160 + indent_horizontal, SIZE * 50], [SIZE * 180 + indent_horizontal, SIZE * 65], [SIZE * 176 + indent_horizontal, SIZE * 72], [SIZE * 154 + indent_horizontal, SIZE * 80], [SIZE * 160 + indent_horizontal, SIZE * 62], [SIZE * 150 + indent_horizontal, SIZE * 80], [SIZE * 120 + indent_horizontal, SIZE * 49]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 95], [SIZE * 160 + indent_horizontal, SIZE * 115], [SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 140 + indent_horizontal, SIZE * 115], [SIZE * 140 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 200], [SIZE * 140 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 200], [SIZE * 160 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 200]])
+        # hand left(gun) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 190 + indent_horizontal, SIZE * 160], [SIZE * 180 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 190 + indent_horizontal, SIZE * 160], [SIZE * 180 + indent_horizontal, SIZE * 160]], 2)
+        # hand right(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 180], [SIZE * 120 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 180], [SIZE * 120 + indent_horizontal, SIZE * 180]], 2)
+    elif middle == "enemy2_corpse_2":
+        pygame.draw.polygon(sc, YELLOW, [[SIZE * 105 + indent_horizontal, SIZE * 105], [SIZE * 195 + indent_horizontal, SIZE * 105], [SIZE * 195 + indent_horizontal, SIZE * 195], [SIZE * 105 + indent_horizontal, SIZE * 195]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 115], [SIZE * 185 + indent_horizontal, SIZE * 115], [SIZE * 185 + indent_horizontal, SIZE * 185], [SIZE * 115 + indent_horizontal, SIZE * 185]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 120 + indent_horizontal, SIZE * 130], [SIZE * 143 + indent_horizontal, SIZE * 118], [SIZE * 169 + indent_horizontal, SIZE * 145], [SIZE * 160 + indent_horizontal, SIZE * 150], [SIZE * 180 + indent_horizontal, SIZE * 165], [SIZE * 176 + indent_horizontal, SIZE * 172], [SIZE * 154 + indent_horizontal, SIZE * 180], [SIZE * 160 + indent_horizontal, SIZE * 162], [SIZE * 150 + indent_horizontal, SIZE * 180], [SIZE * 120 + indent_horizontal, SIZE * 149]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 195], [SIZE * 160 + indent_horizontal, SIZE * 215], [SIZE * 175 + indent_horizontal, SIZE * 225], [SIZE * 175 + indent_horizontal, SIZE * 320], [SIZE * 125 + indent_horizontal, SIZE * 320], [SIZE * 125 + indent_horizontal, SIZE * 225], [SIZE * 140 + indent_horizontal, SIZE * 215], [SIZE * 140 + indent_horizontal, SIZE * 195]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 300], [SIZE * 175 + indent_horizontal, SIZE * 300], [SIZE * 175 + indent_horizontal, SIZE * 320], [SIZE * 125 + indent_horizontal, SIZE * 320]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 300], [SIZE * 140 + indent_horizontal, SIZE * 380], [SIZE * 130 + indent_horizontal, SIZE * 380], [SIZE * 130 + indent_horizontal, SIZE * 300]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 300], [SIZE * 160 + indent_horizontal, SIZE * 380], [SIZE * 170 + indent_horizontal, SIZE * 380], [SIZE * 170 + indent_horizontal, SIZE * 300]])
+        # hand left(gun) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 225], [SIZE * 180 + indent_horizontal, SIZE * 225], [SIZE * 190 + indent_horizontal, SIZE * 260], [SIZE * 180 + indent_horizontal, SIZE * 260]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 225], [SIZE * 180 + indent_horizontal, SIZE * 225], [SIZE * 190 + indent_horizontal, SIZE * 260], [SIZE * 180 + indent_horizontal, SIZE * 260]], 2)
+        # hand right(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 225], [SIZE * 130 + indent_horizontal, SIZE * 225], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 120 + indent_horizontal, SIZE * 280]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 225], [SIZE * 130 + indent_horizontal, SIZE * 225], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 120 + indent_horizontal, SIZE * 280]], 2)
+    elif middle == "enemy2_corpse_3":
+        pygame.draw.polygon(sc, YELLOW, [[SIZE * 105 + indent_horizontal, SIZE * 205], [SIZE * 195 + indent_horizontal, SIZE * 205], [SIZE * 195 + indent_horizontal, SIZE * 295], [SIZE * 105 + indent_horizontal, SIZE * 295]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 215], [SIZE * 185 + indent_horizontal, SIZE * 215], [SIZE * 185 + indent_horizontal, SIZE * 285], [SIZE * 115 + indent_horizontal, SIZE * 285]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 120 + indent_horizontal, SIZE * 230], [SIZE * 143 + indent_horizontal, SIZE * 218], [SIZE * 169 + indent_horizontal, SIZE * 245], [SIZE * 160 + indent_horizontal, SIZE * 250], [SIZE * 180 + indent_horizontal, SIZE * 265], [SIZE * 176 + indent_horizontal, SIZE * 272], [SIZE * 154 + indent_horizontal, SIZE * 280], [SIZE * 160 + indent_horizontal, SIZE * 262], [SIZE * 150 + indent_horizontal, SIZE * 280], [SIZE * 120 + indent_horizontal, SIZE * 249]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 169 + indent_horizontal, SIZE * 245], [SIZE * 169 + indent_horizontal, SIZE * 300], [SIZE * 120 + indent_horizontal, SIZE * 300], [SIZE * 120 + indent_horizontal, SIZE * 249]])
+    elif middle == "boss":
+        print("uwu")
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 95], [SIZE * 105 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 85], [SIZE * 115 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 160 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 155 + indent_horizontal, SIZE * 40], [SIZE * 175 + indent_horizontal, SIZE * 35], [SIZE * 175 + indent_horizontal, SIZE * 25], [SIZE * 155 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 135 + indent_horizontal, SIZE * 65], [SIZE * 145 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 70], [SIZE * 165 + indent_horizontal, SIZE * 65], [SIZE * 165 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 75], [SIZE * 145 + indent_horizontal, SIZE * 75], [SIZE * 135 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 180 + indent_horizontal, SIZE * 5], [SIZE * 139 + indent_horizontal, SIZE * 56], [SIZE * 126 + indent_horizontal, SIZE * 56], [SIZE * 105 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 130 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 125 + indent_horizontal, SIZE * 25], [SIZE * 145 + indent_horizontal, SIZE * 30], [SIZE * 145 + indent_horizontal, SIZE * 40], [SIZE * 125 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 95], [SIZE * 160 + indent_horizontal, SIZE * 115], [SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 140 + indent_horizontal, SIZE * 115], [SIZE * 140 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 200], [SIZE * 140 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 200], [SIZE * 160 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 200]])
+        # heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 125 + indent_horizontal, SIZE * 155], [SIZE * 135 + indent_horizontal, SIZE * 145], [SIZE * 165 + indent_horizontal, SIZE * 145], [SIZE * 175 + indent_horizontal, SIZE * 155], [SIZE * 175 + indent_horizontal, SIZE * 165], [SIZE * 165 + indent_horizontal, SIZE * 175], [SIZE * 135 + indent_horizontal, SIZE * 175], [SIZE * 125 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 140 + indent_horizontal, SIZE * 150], [SIZE * 145 + indent_horizontal, SIZE * 150], [SIZE * 150 + indent_horizontal, SIZE * 155], [SIZE * 155 + indent_horizontal, SIZE * 150], [SIZE * 160 + indent_horizontal, SIZE * 150], [SIZE * 160 + indent_horizontal, SIZE * 160], [SIZE * 155 + indent_horizontal, SIZE * 160], [SIZE * 150 + indent_horizontal, SIZE * 165], [SIZE * 145 + indent_horizontal, SIZE * 160], [SIZE * 140 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 135], [SIZE * 120 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 110 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 125], [SIZE * 110 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 115 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 120], [SIZE * 115 + indent_horizontal, SIZE * 120]])
+    elif middle == "boss_corpse_0":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 95], [SIZE * 105 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 85], [SIZE * 115 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 160 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 155 + indent_horizontal, SIZE * 40], [SIZE * 175 + indent_horizontal, SIZE * 35], [SIZE * 175 + indent_horizontal, SIZE * 25], [SIZE * 155 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 135 + indent_horizontal, SIZE * 65], [SIZE * 145 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 70], [SIZE * 165 + indent_horizontal, SIZE * 65], [SIZE * 165 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 75], [SIZE * 145 + indent_horizontal, SIZE * 75], [SIZE * 135 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 180 + indent_horizontal, SIZE * 5], [SIZE * 139 + indent_horizontal, SIZE * 56], [SIZE * 126 + indent_horizontal, SIZE * 56], [SIZE * 105 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 130 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 125 + indent_horizontal, SIZE * 25], [SIZE * 145 + indent_horizontal, SIZE * 30], [SIZE * 145 + indent_horizontal, SIZE * 40], [SIZE * 125 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 95], [SIZE * 160 + indent_horizontal, SIZE * 115], [SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 140 + indent_horizontal, SIZE * 115], [SIZE * 140 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 200], [SIZE * 140 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 200], [SIZE * 160 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 125 + indent_horizontal, SIZE * 155], [SIZE * 135 + indent_horizontal, SIZE * 145], [SIZE * 165 + indent_horizontal, SIZE * 145], [SIZE * 175 + indent_horizontal, SIZE * 155], [SIZE * 175 + indent_horizontal, SIZE * 165], [SIZE * 165 + indent_horizontal, SIZE * 175], [SIZE * 135 + indent_horizontal, SIZE * 175], [SIZE * 125 + indent_horizontal, SIZE * 165]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 135 + indent_horizontal, SIZE * 150], [SIZE * 140 + indent_horizontal, SIZE * 150], [SIZE * 145 + indent_horizontal, SIZE * 155], [SIZE * 145 + indent_horizontal, SIZE * 165], [SIZE * 140 + indent_horizontal, SIZE * 160], [SIZE * 135 + indent_horizontal, SIZE * 160]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 165 + indent_horizontal, SIZE * 150], [SIZE * 160 + indent_horizontal, SIZE * 150], [SIZE * 155 + indent_horizontal, SIZE * 155], [SIZE * 155 + indent_horizontal, SIZE * 165], [SIZE * 160 + indent_horizontal, SIZE * 160], [SIZE * 165 + indent_horizontal, SIZE * 160]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 135], [SIZE * 120 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 110 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 125], [SIZE * 110 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 115 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 120], [SIZE * 115 + indent_horizontal, SIZE * 120]])
+    elif middle == "boss_corpse_1":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 5], [SIZE * 195 + indent_horizontal, SIZE * 95], [SIZE * 105 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 15], [SIZE * 185 + indent_horizontal, SIZE * 85], [SIZE * 115 + indent_horizontal, SIZE * 85]])
+        pygame.draw.rect(sc, MAGENTA, (SIZE * 160 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 155 + indent_horizontal, SIZE * 40], [SIZE * 175 + indent_horizontal, SIZE * 35], [SIZE * 175 + indent_horizontal, SIZE * 25], [SIZE * 155 + indent_horizontal, SIZE * 30]])
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 135 + indent_horizontal, SIZE * 65], [SIZE * 145 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 70], [SIZE * 165 + indent_horizontal, SIZE * 65], [SIZE * 165 + indent_horizontal, SIZE * 70], [SIZE * 155 + indent_horizontal, SIZE * 75], [SIZE * 145 + indent_horizontal, SIZE * 75], [SIZE * 135 + indent_horizontal, SIZE * 70]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 105 + indent_horizontal, SIZE * 5], [SIZE * 180 + indent_horizontal, SIZE * 5], [SIZE * 139 + indent_horizontal, SIZE * 56], [SIZE * 126 + indent_horizontal, SIZE * 56], [SIZE * 105 + indent_horizontal, SIZE * 39]])
+        pygame.draw.rect(sc, YELLOW, (SIZE * 130 + indent_horizontal, SIZE * 30, SIZE * 10, SIZE * 20))
+        pygame.draw.polygon(sc, DARK_MAGENTA, [[SIZE * 125 + indent_horizontal, SIZE * 25], [SIZE * 145 + indent_horizontal, SIZE * 30], [SIZE * 145 + indent_horizontal, SIZE * 40], [SIZE * 125 + indent_horizontal, SIZE * 35]])
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 160 + indent_horizontal, SIZE * 95], [SIZE * 160 + indent_horizontal, SIZE * 115], [SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 140 + indent_horizontal, SIZE * 115], [SIZE * 140 + indent_horizontal, SIZE * 95]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 125 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 200], [SIZE * 175 + indent_horizontal, SIZE * 220], [SIZE * 125 + indent_horizontal, SIZE * 220]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 140 + indent_horizontal, SIZE * 200], [SIZE * 140 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 280], [SIZE * 130 + indent_horizontal, SIZE * 200]])
+        pygame.draw.polygon(sc, JEANS, [[SIZE * 160 + indent_horizontal, SIZE * 200], [SIZE * 160 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 280], [SIZE * 170 + indent_horizontal, SIZE * 200]])
+        # broken heart and heratbox
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 125 + indent_horizontal, SIZE * 155], [SIZE * 135 + indent_horizontal, SIZE * 145], [SIZE * 165 + indent_horizontal, SIZE * 145], [SIZE * 175 + indent_horizontal, SIZE * 155], [SIZE * 175 + indent_horizontal, SIZE * 165], [SIZE * 165 + indent_horizontal, SIZE * 175], [SIZE * 135 + indent_horizontal, SIZE * 175], [SIZE * 125 + indent_horizontal, SIZE * 165]])
+        # hand left(empty) v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 170 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 125], [SIZE * 180 + indent_horizontal, SIZE * 180], [SIZE * 170 + indent_horizontal, SIZE * 180]], 2)
+        # hand right(w/ bazooka)v
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]])
+        pygame.draw.lines(sc, WHITE, True, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 160], [SIZE * 120 + indent_horizontal, SIZE * 160]], 2)
+        pygame.draw.polygon(sc, MAGENTA, [[SIZE * 120 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 125], [SIZE * 130 + indent_horizontal, SIZE * 135], [SIZE * 120 + indent_horizontal, SIZE * 135]])
+        pygame.draw.polygon(sc, GRAY, [[SIZE * 110 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 95], [SIZE * 140 + indent_horizontal, SIZE * 125], [SIZE * 110 + indent_horizontal, SIZE * 125]])
+        pygame.draw.polygon(sc, DARK_GRAY, [[SIZE * 115 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 100], [SIZE * 135 + indent_horizontal, SIZE * 120], [SIZE * 115 + indent_horizontal, SIZE * 120]])
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 125 + indent_horizontal, SIZE * 125], [SIZE * 135 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 175 + indent_horizontal, SIZE * 125], [SIZE * 165 + indent_horizontal, SIZE * 135]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 125 + indent_horizontal, SIZE * 175], [SIZE * 135 + indent_horizontal, SIZE * 165]], 10)
+        pygame.draw.lines(sc, DARK_MAGENTA, True, [[SIZE * 175 + indent_horizontal, SIZE * 175], [SIZE * 165 + indent_horizontal, SIZE * 165]], 10)
+    elif middle == "boss_corpse_2":
+        pygame.draw.polygon(sc, WHITE, [[SIZE * 105 + indent_horizontal, SIZE * 205], [SIZE * 195 + indent_horizontal, SIZE * 205], [SIZE * 195 + indent_horizontal, SIZE * 295], [SIZE * 105 + indent_horizontal, SIZE * 295]])
+        pygame.draw.polygon(sc, BLACK, [[SIZE * 115 + indent_horizontal, SIZE * 215], [SIZE * 185 + indent_horizontal, SIZE * 215], [SIZE * 185 + indent_horizontal, SIZE * 285], [SIZE * 115 + indent_horizontal, SIZE * 285]])
+        pygame.draw.polygon(sc, GREEN, [[SIZE * 105 + indent_horizontal, SIZE * 205], [SIZE * 180 + indent_horizontal, SIZE * 205], [SIZE * 139 + indent_horizontal, SIZE * 256], [SIZE * 126 + indent_horizontal, SIZE * 256], [SIZE * 105 + indent_horizontal, SIZE * 239]])
 
 
 def drawWeapon(state, weapon):
@@ -734,7 +1077,7 @@ while 1:
                 if direction == 1:
                     if y == 7:
                         y = 1
-                        leveldict = leveldict_new.copy()
+                        leveldict = generate_chunk()
                     else:
                         y += 1
                 elif direction == 0:
@@ -754,10 +1097,15 @@ while 1:
                         x -= 1
         elif mode == "debug":
             if screen == 0:
-                screen = 1
+                if option == 0:
+                    option = 3
+                else:
+                    option -= 1
             else:
-                screen -= 1
-            option = 0
+                if option == 0:
+                    option = 1
+                else:
+                    option -= 1
     if last_key == "down":
                     if mode == "game":
                         turn = "enemy"
@@ -797,7 +1145,7 @@ while 1:
                                 if direction == 3:
                                     if y == 7:
                                         y = 1
-                                        leveldict = leveldict_new.copy()
+                                        leveldict = generate_chunk()
                                         print(leveldict)
                                     else:
                                         y += 1
@@ -816,13 +1164,18 @@ while 1:
                                         pass
                                     else:
                                         x -= 1
+                        
                     elif mode == "debug":
-                        if screen == 1:
-                            screen = 0
-
+                        if screen == 0:
+                            if option == 3:
+                                option = 0
+                            else:
+                                option += 1
                         else:
-                            screen += 1
-                        option = 0
+                            if option == 1:
+                                option = 0
+                            else:
+                                option += 1        
     elif last_key == "left":
         if mode == "game":
             turn = "enemy"
@@ -831,16 +1184,12 @@ while 1:
             else:
                 direction = 0
         elif mode == "debug":
-            if screen == 0:
-                if option == 0:
-                    option = 2
-                else:
-                    option -= 1
+            if screen == 1:
+                screen = 0
+
             else:
-                if option == 0:
-                    option = 1
-                else:
-                    option -= 1
+                screen += 1
+            option = 0        
     elif last_key == "d":
         if mode != "debug" and mode != "title":
             mode = "debug"
@@ -860,15 +1209,11 @@ while 1:
                 direction = 3
         elif mode == "debug":
             if screen == 0:
-                if option == 2:
-                    option = 0
-                else:
-                    option += 1
+                screen = 1
             else:
-                if option == 1:
-                    option = 0
-                else:
-                    option += 1
+                screen -= 1
+            option = 0        
+        
     elif last_key == "space":
         if mode == "game":
             turn = "enemy"
@@ -890,10 +1235,11 @@ while 1:
                 coords = str(y) + "-" + str(x - 1)
             elif direction == 3:
                 coords = str(y - 1) + "-" + str(x)
-            if middle == "enemy1" or middle == "enemy2":
+            if middle == "enemy1" or middle == "enemy2" or middle == "boss":
                 leveldict["health_enemy"] = leveldict["health_enemy"] - damage
                 if leveldict["health_enemy"] <= 0:
-                    leveldict[coords] = leveldict[coords] + "_corpse_3"
+                    leveldict[coords] = leveldict[coords] + "_corpse_0"
+                    tick = 0
             damage = 0
                 
         
@@ -1004,6 +1350,8 @@ while 1:
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])
                 text = font.render("Give 10 bullets", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render("Show debug info", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])
             elif option == 1:
                 text = font.render("Close game", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])
@@ -1011,6 +1359,8 @@ while 1:
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])
                 text = font.render("Give 10 bullets", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render("Show debug info", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])                  
             elif option == 2:
                 text = font.render("Close game", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])
@@ -1018,6 +1368,17 @@ while 1:
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])
                 text = font.render(">Give 10 bullets", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render("Show debug info", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])                
+            elif option == 3:
+                text = font.render("Close game", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])
+                text = font.render("Set HP to 100", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])
+                text = font.render("Give 10 bullets", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render(">Show debug info", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])
         elif screen == 1:
             text = font.render("Debug maps", 1, WHITE)
             sc.blit(text, [indent_horizontal + SIZE * 100, SIZE * 60])
@@ -1032,22 +1393,24 @@ while 1:
                 text = font.render(">Enemy test", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])            
     pygame.display.update()
-    pygame.time.delay(500)
+    pygame.time.delay(100)
+    tick += 1
     last_key = ""
     if turn != "player":
         turn = "player"
         b = 0
         for tile in leveldict:
             if b != 1:
-                if leveldict[tile] == "enemy1" or leveldict[tile] == "enemy2":
-                    if leveldict[tile] == "enemy1":
-                        a = 0
-                    else:
-                        a = 1
+                if leveldict[tile] == "enemy1" or leveldict[tile] == "enemy2" or leveldict[tile] == "boss":
                     enemy_X = int(tile[2:3])
                     enemy_Y = int(tile[:1])
                     if enemy_X + 1 == x and enemy_Y == y or enemy_X - 1 == x and enemy_Y == y or enemy_X + 1 == x and enemy_Y + 1 == y or enemy_X + 1 == x and enemy_Y - 1 == y or enemy_X - 1 == x and enemy_Y + 1 == y or enemy_X + 1 == x and enemy_Y - 1 == y or enemy_X == x and enemy_Y + 1 == y or enemy_X == x and enemy_Y - 1 == y:
-                        damage += 5
+                        if leveldict[tile] == "enemy1":
+                            damage = randint(1, 6)
+                        elif leveldict[tile] == "enemy2":
+                            damage = randint(3, 10)
+                        elif leveldict[tile] == "boss":
+                            damage = randint(7, 16)
                         health = health - damage
                         damage = 0
                         if health < 1:
@@ -1078,16 +1441,33 @@ while 1:
                                     enemy_X -= 1
 
                     coords = str(enemy_Y) + "-" + str(enemy_X)
-                    leveldict[tile] = ""
-                    if a == 0:
-                        leveldict[coords] = "enemy1"
-                    else:
-                        leveldict[coords] = "enemy2"
-                        
+                    spare_string = leveldict[tile]
+                    leveldict[coords] = spare_string
+                    if coords != tile:
+                        leveldict[tile] = ""
 
     if weapon_action == "attack":
         weapon_action = "idle"
     turn = "player"
+    if tick % 5 == 0 or tick == 0:
+        for cell in leveldict:
+            print(cell)
+            if leveldict[cell] == "enemy1_corpse_0":
+                leveldict[cell] = "enemy1_corpse_1"
+            elif leveldict[cell] == "enemy1_corpse_1":
+                leveldict[cell] = "enemy1_corpse_2"
+            elif leveldict[cell] == "enemy1_corpse_2":
+                leveldict[cell] = "enemy1_corpse_3"
+            elif leveldict[cell] == "enemy2_corpse_0":
+                leveldict[cell] = "enemy2_corpse_1"
+            elif leveldict[cell] == "enemy2_corpse_1":
+                leveldict[cell] = "enemy2_corpse_2"
+            elif leveldict[cell] == "enemy2_corpse_2":
+                leveldict[cell] = "enemy2_corpse_3"
+            elif leveldict[cell] == "boss_corpse_0":
+                leveldict[cell] = "boss_corpse_1"
+            elif leveldict[cell] == "boss_corpse_1":
+                leveldict[cell] = "boss_corpse_2"
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
