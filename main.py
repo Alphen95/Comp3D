@@ -63,7 +63,6 @@ if kernel == "Windows":
     pathEnemy1 = pathFolder + "\\res\\enemy1.png"
     pathEnemy1Atk = pathFolder + "\\res\\enemy1_atk.png"
     pathEnemy1_corpse0 = pathFolder + "\\res\\enemy1_corpse0.png"
-    print(pathEnemy1_corpse0)
     pathEnemy1_corpse1 = pathFolder + "\\res\\enemy1_corpse1.png"
     pathEnemy1_corpse2 = pathFolder + "\\res\\enemy1_corpse2.png"
     pathEnemy1_corpse3 = pathFolder + "\\res\\enemy1_corpse3.png"
@@ -911,7 +910,7 @@ while 1:
         text = font.render("Debug menu cofirm : [Enter]", 1, GREEN)
         sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])
         text = font.render("Leave game : [Q]", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])   
+        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])   
     elif mode == "debug":
         sc.fill(BLACK)
         text = font.render("DEBUG MENU", 1, WHITE)
