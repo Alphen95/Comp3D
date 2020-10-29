@@ -3,6 +3,7 @@ from random import randint
 from pprint import pprint
 from pathlib import Path
 import platform
+import time
 
 pygame.init()
 
@@ -29,7 +30,7 @@ SIZE = 3
 health = 0
 
 infoObject = pygame.display.Info()
-pygame.display.set_caption('Compystein 3-D Beta 2')
+pygame.display.set_caption('Compystein 3-D Beta 2.2')
 sc = pygame.display.set_mode((infoObject.current_w, SIZE * 300), pygame.FULLSCREEN)
 indent_horizontal = int((infoObject.current_w - SIZE * 300) / 2)
 ready_to_refresh = True
@@ -263,6 +264,7 @@ def generate_chunk():
             "7-1": "", "7-2": "", "7-3": "", "7-4": "", "7-5": ""
         }
     return chunk
+
 
 def look(x, y, direction, lvldict):
     left = ""
@@ -578,7 +580,6 @@ def drawHUD(hp, ammo, lastact):
 damage = 0
 turn = "player"
 current_weapon = "pistol"
-
 while 1:
     if last_key == "up":
         if mode == "game":
