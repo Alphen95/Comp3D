@@ -90,6 +90,7 @@ if kernel == "Windows":
     pathMusKnife_slash = pathFolder + "\\res\\knife_slash.ogg"
     pathMusAchiv1= pathFolder + "\\res\\achivement1.ogg"
     pathMusShoot= pathFolder + "\\res\\shoot.wav"
+    pathMusBgmOldOffice= pathFolder + "\\res\\mus_old_office.wav"
 else:
     pathWallL = pathFolder + "/res/wall_left.png"
     pathWallR = pathFolder + "/res/wall_right.png"
@@ -124,6 +125,7 @@ else:
     pathMusKnife_slash = pathFolder + "/res/knife_slash.ogg"
     pathMusAchiv1= pathFolder + "/res/achivement1.ogg"
     pathMusShoot= pathFolder + "/res/shoot.wav"
+    pathMusBgmOldOffice= pathFolder + "/res/mus_old_office.wav"
 WallL_Image = pygame.image.load(pathWallL)
 WallR_Image = pygame.image.load(pathWallR)
 Wall2_Image = pygame.image.load(pathWall2)
@@ -158,6 +160,7 @@ Achiv1_Image = pygame.image.load(pathAchiv1)
 sound_knife_slash = pygame.mixer.Sound(pathMusKnife_slash)
 sound_achivement1 = pygame.mixer.Sound(pathMusAchiv1)
 sound_shoot = pygame.mixer.Sound(pathMusShoot)
+bgm_oldoffice = pygame.mixer.Sound(pathMusBgmOldOffice)
 
 font = pygame.font.Font("pixel_font.ttf", 72)
 
@@ -827,6 +830,7 @@ while 1:
             direction = 1
             leveldict = leveldict_new.copy()
             turn = "player"
+            bgm_oldoffice.play(-1)
 
 
     elif last_key == "1":
@@ -868,6 +872,7 @@ while 1:
             leveldict_new = leveldict_collis_test.copy()
             leveldict = leveldict_new.copy()
             turn = "player"
+            bgm_oldoffice.play(-1)
         elif mode == "game_over":
     
             mode = "title"
@@ -881,6 +886,7 @@ while 1:
             showAchivement("Genocide",Achiv1_Image)       
             todo = "achivement1"
     elif mode == "game_over":
+        pygame.mixer.music.pause()
         disp_left, disp_middle, disp_right = look(x, y, direction, leveldict)
         print(disp_left, disp_middle, disp_right)
         refresh(disp_left, disp_middle, disp_right, health, ammo, weapon_action, current_weapon)
