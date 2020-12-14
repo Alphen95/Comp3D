@@ -1,11 +1,7 @@
-import pygame
+import pygame, platform, time, sys,linecache,json
 from random import randint
 from pprint import pprint
 from pathlib import Path
-import platform
-import time
-
-pygame.init()
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -18,7 +14,7 @@ NAVY = (0, 0, 128)
 DARK_GREEN = (0, 100, 0)
 RED = (255, 0, 0)
 JEANS = (26, 34, 74)
-LIGHTGRAY = (169, 169, 169)
+LIGHTGRAY = (169, 169, 169) 
 MEDKIT = (211, 211, 211)
 BROWN = (87, 39, 3)
 LIGHTYELLOW = (214, 207, 148)
@@ -28,14 +24,10 @@ DARK_MAGENTA = (74, 4, 74)
 DARK_GRAY = (33, 33, 33)
 SIZE = 3
 health = 0
-
-infoObject = pygame.display.Info()
-pygame.display.set_caption('Compystein 3-D Beta 2.2')
-sc = pygame.display.set_mode((infoObject.current_w, SIZE * 300), pygame.FULLSCREEN)
-indent_horizontal = int((infoObject.current_w - SIZE * 300) / 2)
 ready_to_refresh = True
 todo = "nothing"
 count = 0
+quitted = False
 last_key = "uwu"
 current_weapon = "fist"
 weapon_action = "idle"
@@ -43,6 +35,8 @@ screen = 0
 ticks_from_last_act = 0
 x = 3
 y = 1
+specialtiles = []
+arguments = sys.argv
 has_knife = False
 direction = 1
 todo = ""
@@ -53,119 +47,151 @@ mode = "title"
 screen = 0
 option = 0
 tick = 0
+path_custom_level = ""
 achivement1 = False
-pathFolder = str(Path().absolute())
+path_folder = str(Path().absolute())
 kernel = platform.system()
+useLocalization = False
+is_custom_level = False
+#Coded by 1 russian programmer, Alphen95(also Luigi180059 and Luigi Toadstool)
 if kernel == "Windows":
-    pathWallL = pathFolder + "\\res\\wall_left.png"
-    pathWallR = pathFolder + "\\res\\wall_right.png"
-    pathWall2 = pathFolder + "\\res\\wall2.png"
-    pathEnemy1 = pathFolder + "\\res\\enemy1.png"
-    pathEnemy1Atk = pathFolder + "\\res\\enemy1_atk.png"
-    pathEnemy1_corpse0 = pathFolder + "\\res\\enemy1_corpse0.png"
-    pathEnemy1_corpse1 = pathFolder + "\\res\\enemy1_corpse1.png"
-    pathEnemy1_corpse2 = pathFolder + "\\res\\enemy1_corpse2.png"
-    pathEnemy1_corpse3 = pathFolder + "\\res\\enemy1_corpse3.png"
-    pathEnemy2 = pathFolder + "\\res\\enemy2.png"
-    pathEnemy2Atk = pathFolder + "\\res\\enemy2.png"
-    pathEnemy2_corpse0 = pathFolder + "\\res\\enemy2_corpse0.png"
-    pathEnemy2_corpse1 = pathFolder + "\\res\\enemy2_corpse1.png"
-    pathEnemy2_corpse2 = pathFolder + "\\res\\enemy2_corpse2.png"
-    pathEnemy2_corpse3 = pathFolder + "\\res\\enemy2_corpse3.png"
-    pathBoss = pathFolder + "\\res\\boss.png"
-    pathBossAtk = pathFolder + "\\res\\boss_atk.png"
-    pathBoss_corpse0 = pathFolder + "\\res\\boss_corpse0.png"
-    pathBoss_corpse1 = pathFolder + "\\res\\boss_corpse1.png"
-    pathBoss_corpse2 = pathFolder + "\\res\\boss_corpse2.png"    
-    pathBullets = pathFolder + "\\res\\bullets.png"
-    pathMedkit = pathFolder + "\\res\\medkit.png"
-    pathHandIdle = pathFolder + "\\res\\hand_idle.png"
-    pathKnife = pathFolder + "\\res\\knife.png"
-    pathKnifePick = pathFolder + "\\res\\knife_pickup.png"
-    pathGunIdle = pathFolder + "\\res\\gun_idle.png"
-    pathGunAtk = pathFolder + "\\res\\gun_atk.png"
-    pathTitle = pathFolder + "\\res\\title.png"
-    pathStatusbar = pathFolder + "\\res\\statusbar.png"
-    pathAchiv1 = pathFolder + "\\res\\chara_achivement.png"
-    pathMusKnife_slash = pathFolder + "\\res\\knife_slash.ogg"
-    pathMusAchiv1= pathFolder + "\\res\\achivement1.ogg"
-    pathMusShoot= pathFolder + "\\res\\shoot.wav"
-    pathMusBgmOldOffice= pathFolder + "\\res\\mus_old_office.wav"
+    path_wall_l = path_folder + "\\res\\wall_left.png"
+    path_wall_r = path_folder + "\\res\\wall_right.png"
+    path_wall2 = path_folder + "\\res\\wall2.png"
+    path_enemy1 = path_folder + "\\res\\enemy1.png"
+    path_enemy1_atk = path_folder + "\\res\\enemy1_atk.png"
+    path_enemy1_corpse0 = path_folder + "\\res\\enemy1_corpse0.png"
+    path_enemy1_corpse1 = path_folder + "\\res\\enemy1_corpse1.png"
+    path_enemy1_corpse2 = path_folder + "\\res\\enemy1_corpse2.png"
+    path_enemy1_corpse3 = path_folder + "\\res\\enemy1_corpse3.png"
+    path_enemy2 = path_folder + "\\res\\enemy2.png"
+    path_enemy2_atk = path_folder + "\\res\\enemy2.png"
+    path_enemy2_corpse0 = path_folder + "\\res\\enemy2_corpse0.png"
+    path_enemy2_corpse1 = path_folder + "\\res\\enemy2_corpse1.png"
+    path_enemy2_corpse2 = path_folder + "\\res\\enemy2_corpse2.png"
+    path_enemy2_corpse3 = path_folder + "\\res\\enemy2_corpse3.png"
+    path_boss = path_folder + "\\res\\boss.png"
+    path_boss_atk = path_folder + "\\res\\boss_atk.png"
+    path_boss_corpse0 = path_folder + "\\res\\boss_corpse0.png"
+    path_boss_corpse1 = path_folder + "\\res\\boss_corpse1.png"
+    path_boss_corpse2 = path_folder + "\\res\\boss_corpse2.png"    
+    path_bullets = path_folder + "\\res\\bullets.png"
+    path_medkit = path_folder + "\\res\\medkit.png"
+    path_hand = path_folder + "\\res\\hand_idle.png"
+    path_knife + "\\res\\knife.png"
+    path_knife_item = path_folder + "\\res\\knife_pickup.png"
+    path_gun_idle = path_folder + "\\res\\gun_idle.png"
+    path_gun_atk = path_folder + "\\res\\gun_atk.png"
+    path_title = path_folder + "\\res\\title.png"
+    path_error = path_folder + "\\res\\error_screen.png"
+    path_floor= path_folder + "\\res\\floor.png"
+    path_statusbar = path_folder + "\\res\\statusbar.png"
+    path_achiv1 = path_folder + "\\res\\chara_achivement.png"
+    path_snd_slash = path_folder + "\\res\\knife_slash.ogg"
+    path_snd_achiv1= path_folder + "\\res\\achivement1.ogg"
+    path_snd_shoot= path_folder + "\\res\\shoot.wav"
+    path_bgm_old_office= path_folder + "\\res\\mus_old_office.wav"
+    path_localization = path_folder + "\\localization\\translated_comp3d.json"
 else:
-    pathWallL = pathFolder + "/res/wall_left.png"
-    pathWallR = pathFolder + "/res/wall_right.png"
-    pathWall2 = pathFolder + "/res/wall2.png"
-    pathEnemy1 = pathFolder + "/res/enemy1.png"
-    pathEnemy1Atk = pathFolder + "/res/enemy1_atk.png"
-    pathEnemy1_corpse0 = pathFolder + "/res/enemy1_corpse0.png"
-    pathEnemy1_corpse1 = pathFolder + "/res/enemy1_corpse1.png"
-    pathEnemy1_corpse2 = pathFolder + "/res/enemy1_corpse2.png"
-    pathEnemy1_corpse3 = pathFolder + "/res/enemy1_corpse3.png"
-    pathEnemy2 = pathFolder + "/res/enemy2.png"
-    pathEnemy2Atk = pathFolder + "/res/enemy2_atk.png"
-    pathEnemy2_corpse0 = pathFolder + "/res/enemy2_corpse0.png"
-    pathEnemy2_corpse1 = pathFolder + "/res/enemy2_corpse1.png"
-    pathEnemy2_corpse2 = pathFolder + "/res/enemy2_corpse2.png"
-    pathEnemy2_corpse3 = pathFolder + "/res/enemy2_corpse3.png"
-    pathBoss = pathFolder + "/res/boss.png"
-    pathBossAtk = pathFolder + "/res/boss_atk.png"
-    pathBoss_corpse0 = pathFolder + "/res/boss_corpse0.png"
-    pathBoss_corpse1 = pathFolder + "/res/boss_corpse1.png"
-    pathBoss_corpse2 = pathFolder + "/res/boss_corpse2.png"      
-    pathBullets = pathFolder + "/res/bullets.png"
-    pathMedkit = pathFolder + "/res/medkit.png"
-    pathHandIdle = pathFolder + "/res/hand_idle.png"
-    pathKnife= pathFolder + "/res/knife.png"
-    pathAchiv1= pathFolder + "/res/chara_achivement.png"
-    pathKnifePick= pathFolder + "/res/knife_pickup.png"
-    pathGunIdle = pathFolder + "/res/gun_idle.png"
-    pathGunAtk = pathFolder + "/res/gun_atk.png"
-    pathTitle = pathFolder + "/res/title.png"
-    pathStatusbar = pathFolder + "/res/statusbar.png"
-    pathMusKnife_slash = pathFolder + "/res/knife_slash.ogg"
-    pathMusAchiv1= pathFolder + "/res/achivement1.ogg"
-    pathMusShoot= pathFolder + "/res/shoot.wav"
-    pathMusBgmOldOffice= pathFolder + "/res/mus_old_office.wav"
-WallL_Image = pygame.image.load(pathWallL)
-WallR_Image = pygame.image.load(pathWallR)
-Wall2_Image = pygame.image.load(pathWall2)
-Enemy1_Image = pygame.image.load(pathEnemy1)
-Enemy1Atk_Image = pygame.image.load(pathEnemy1Atk)
-Enemy1_Image_corpse0 = pygame.image.load(pathEnemy1_corpse0)
-Enemy1_Image_corpse1 = pygame.image.load(pathEnemy1_corpse1)
-Enemy1_Image_corpse2 = pygame.image.load(pathEnemy1_corpse2)
-Enemy1_Image_corpse3 = pygame.image.load(pathEnemy1_corpse3)
-Enemy2_Image = pygame.image.load(pathEnemy2)
-Enemy2Atk_Image = pygame.image.load(pathEnemy2Atk)
-Enemy2_Image_corpse0 = pygame.image.load(pathEnemy2_corpse0)
-Enemy2_Image_corpse1 = pygame.image.load(pathEnemy2_corpse1)
-Enemy2_Image_corpse2 = pygame.image.load(pathEnemy2_corpse2)
-Enemy2_Image_corpse3 = pygame.image.load(pathEnemy2_corpse3)
-Boss_Image = pygame.image.load(pathBoss)
-BossAtk_Image = pygame.image.load(pathBossAtk)
-Boss_Image_corpse0 = pygame.image.load(pathBoss_corpse0)
-Boss_Image_corpse1 = pygame.image.load(pathBoss_corpse1)
-Boss_Image_corpse2 = pygame.image.load(pathBoss_corpse2)
-HandIdle_Image = pygame.image.load(pathHandIdle)
-Knife_Image = pygame.image.load(pathKnife)
-KnifePick_Image = pygame.image.load(pathKnifePick)
-GunIdle_Image = pygame.image.load(pathGunIdle)
-GunAtk_Image = pygame.image.load(pathGunAtk)
-Bullets_Image = pygame.image.load(pathBullets)
-Medkit_Image = pygame.image.load(pathMedkit)
-Title_Image = pygame.image.load(pathTitle)
-Statusbar_Image = pygame.image.load(pathStatusbar)
-Achiv1_Image = pygame.image.load(pathAchiv1)
+    path_wall_l = path_folder + "/res/wall_left.png"
+    path_wall_r = path_folder + "/res/wall_right.png"
+    path_wall2 = path_folder + "/res/wall2.png"
+    path_enemy1 = path_folder + "/res/enemy1.png"
+    path_enemy1_atk = path_folder + "/res/enemy1_atk.png"
+    path_enemy1_corpse0 = path_folder + "/res/enemy1_corpse0.png"
+    path_enemy1_corpse1 = path_folder + "/res/enemy1_corpse1.png"
+    path_enemy1_corpse2 = path_folder + "/res/enemy1_corpse2.png"
+    path_enemy1_corpse3 = path_folder + "/res/enemy1_corpse3.png"
+    path_enemy2 = path_folder + "/res/enemy2.png"
+    path_enemy2_atk = path_folder + "/res/enemy2_atk.png"
+    path_enemy2_corpse0 = path_folder + "/res/enemy2_corpse0.png"
+    path_enemy2_corpse1 = path_folder + "/res/enemy2_corpse1.png"
+    path_enemy2_corpse2 = path_folder + "/res/enemy2_corpse2.png"
+    path_enemy2_corpse3 = path_folder + "/res/enemy2_corpse3.png"
+    path_boss = path_folder + "/res/boss.png"
+    path_boss_atk = path_folder + "/res/boss_atk.png"
+    path_boss_corpse0 = path_folder + "/res/boss_corpse0.png"
+    path_boss_corpse1 = path_folder + "/res/boss_corpse1.png"
+    path_boss_corpse2 = path_folder + "/res/boss_corpse2.png"      
+    path_bullets = path_folder + "/res/bullets.png"
+    path_medkit = path_folder + "/res/medkit.png"
+    path_hand = path_folder + "/res/hand_idle.png"
+    path_knife= path_folder + "/res/knife.png"
+    path_achiv1= path_folder + "/res/chara_achivement.png"
+    path_knife_item= path_folder + "/res/knife_pickup.png"
+    path_gun_idle = path_folder + "/res/gun_idle.png"
+    path_gun_atk = path_folder + "/res/gun_atk.png"
+    path_title = path_folder + "/res/title.png"
+    path_error = path_folder + "/res/error_screen.png"
+    path_floor= path_folder + "/res/floor.png"
+    path_statusbar = path_folder + "/res/statusbar.png"
+    path_snd_slash = path_folder + "/res/knife_slash.ogg"
+    path_snd_achiv1= path_folder + "/res/achivement1.ogg"
+    path_snd_shoot= path_folder + "/res/shoot.wav"
+    path_bgm_old_office= path_folder + "/res/mus_old_office.wav"
+    path_localization = path_folder + "/localization/translated_comp3d.json"
+    
+try:
+    with open(path_localization,mode="r") as decoded_json:
+        contents_json = decoded_json.read()
+        text_localization = json.loads(contents_json)
+    print("Found localization flie, wish to use it?")
+    print(text_localization[-1])
+    answer = input("Y/N>")
+    if answer.lower() == "yes" or answer.lower() == "y":
+        useLocalization = True
+except:
+    print("No localization flie found")
+pygame.init()
+infoObject = pygame.display.Info()
+pygame.display.set_caption('Compystein 3-D Pre-Release')
+sc = pygame.display.set_mode((infoObject.current_w, SIZE * 300), pygame.FULLSCREEN)
+indent_horizontal = int((infoObject.current_w - SIZE * 300) / 2)
 
-sound_knife_slash = pygame.mixer.Sound(pathMusKnife_slash)
-sound_achivement1 = pygame.mixer.Sound(pathMusAchiv1)
-sound_shoot = pygame.mixer.Sound(pathMusShoot)
-bgm_oldoffice = pygame.mixer.Sound(pathMusBgmOldOffice)
+image_wall_l = pygame.image.load(path_wall_l)
+image_wall_r = pygame.image.load(path_wall_r)
+image_wall_2 = pygame.image.load(path_wall2)
+image_enemy1 = pygame.image.load(path_enemy1)
+image_enemy1_atk = pygame.image.load(path_enemy1_atk)
+image_enemy1_corpse0 = pygame.image.load(path_enemy1_corpse0)
+image_enemy1_corpse1 = pygame.image.load(path_enemy1_corpse1)
+image_enemy1_corpse2 = pygame.image.load(path_enemy1_corpse2)
+image_enemy1_corpse3 = pygame.image.load(path_enemy1_corpse3)
+image_enemy2 = pygame.image.load(path_enemy2)
+image_enemy2_atk = pygame.image.load(path_enemy2_atk)
+image_enemy2_corpse0 = pygame.image.load(path_enemy2_corpse0)
+image_enemy2_corpse1 = pygame.image.load(path_enemy2_corpse1)
+image_enemy2_corpse2 = pygame.image.load(path_enemy2_corpse2)
+image_enemy2_corpse3 = pygame.image.load(path_enemy2_corpse3)
+image_boss = pygame.image.load(path_boss)
+image_boss_atk = pygame.image.load(path_boss_atk)
+image_boss_corpse0 = pygame.image.load(path_boss_corpse0)
+image_boss_corpse1 = pygame.image.load(path_boss_corpse1)
+image_boss_corpse2 = pygame.image.load(path_boss_corpse2)
+image_knife_sprite = pygame.image.load(path_knife_item)
+image_bullets = pygame.image.load(path_bullets)
+image_medkit = pygame.image.load(path_medkit)
+image_hand = pygame.image.load(path_hand)
+image_kinfe = pygame.image.load(path_knife)
+image_lightgun_atk = pygame.image.load(path_gun_atk)
+image_lightgun_idle = pygame.image.load(path_gun_idle)
+image_title = pygame.image.load(path_title)
+image_error = pygame.image.load(path_error)
+image_floor = pygame.image.load(path_floor)
+image_statusbar = pygame.image.load(path_statusbar)
+image_achiv1 = pygame.image.load(path_achiv1)
+
+snd_knife_slash = pygame.mixer.Sound(path_snd_slash)
+snd_achivement1 = pygame.mixer.Sound(path_snd_achiv1)
+snd_shoot = pygame.mixer.Sound(path_snd_shoot)
+bgm_oldoffice = pygame.mixer.Sound(path_bgm_old_office)
 
 font = pygame.font.Font("pixel_font.ttf", 72)
+medium_font = pygame.font.Font("pixel_font.ttf", 32)
+small_font = pygame.font.Font("pixel_font.ttf", 16)
 
 leveldict_collis_test = {
-    "1-1": "knife_pickup", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
+    "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
     "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
     "3-1": "bullets", "3-2": "wall", "3-3": "wall", "3-4": "wall", "3-5": "wall",
     "4-1": "", "4-2": "", "4-3": "enemy1_corpse_3", "4-4": "", "4-5": "",
@@ -180,7 +206,7 @@ leveldict_enemy_test = {
     "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
     "5-1": "", "5-2": "", "5-3": "", "5-4": "", "5-5": "",
     "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
-    "7-1": "", "7-2": "enemy1", "7-3": "", "7-4": "", "7-5": "", "health_enemy": 10
+    "7-1": "", "7-2": "enemy1_10", "7-3": "", "7-4": "", "7-5": ""
 }
 
 leveldict_new = leveldict_collis_test.copy()
@@ -188,9 +214,9 @@ leveldict = leveldict_new.copy()
 
 
 
-def refresh(left, middle, right, hp, ammo, state, wpn):
+def refresh(left, middle, right, left_diag, right_diag, hp, ammo, state, wpn):
     sc.fill(BLACK)
-    drawScreen(left, middle, right)
+    drawScreen(left, middle, right,left_diag,right_diag)
     drawWeapon(state, wpn)
     drawHUD(hp, ammo, "uwu")
     
@@ -202,19 +228,21 @@ def generate_chunk():
             "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
             "3-1": "bullets", "3-2": "wall", "3-3": "wall", "3-4": "wall", "3-5": "wall",
             "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
-            "5-1": "", "5-2": "", "5-3": "enemy1", "5-4": "wall", "5-5": "",
+            "5-1": "", "5-2": "", "5-3": "enemy1_10", "5-4": "wall", "5-5": "",
             "6-1": "", "6-2": "bullets", "6-3": "bullets", "6-4": "wall", "6-5": "",
-            "7-1": "wall", "7-2": "wall", "7-3": "wall", "7-4": "wall", "7-5": "", "health_enemy": 10
+            "7-1": "wall", "7-2": "wall", "7-3": "wall", "7-4": "wall", "7-5": "",
+            "8-1": "wall", "8-2": "wall", "8-3": "medkit", "8-4": "", "8-5": "",
+            "9-1": "wall", "9-2": "wall", "9-3": "wall", "9-4": "wall", "9-5": ""
         }
     elif chunk_id == 1:
         chunk = {
             "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
             "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
-            "3-1": "", "3-2": "", "3-3": "enemy1", "3-4": "", "3-5": "",
+            "3-1": "", "3-2": "", "3-3": "enemy1_10", "3-4": "", "3-5": "",
             "4-1": "", "4-2": "wall", "4-3": "wall", "4-4": "wall", "4-5": "",
             "5-1": "", "5-2": "", "5-3": "medkit", "5-4": "", "5-5": "",
             "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
-            "7-1": "wall", "7-2": "wall", "7-3": "", "7-4": "wall", "7-5": "wall", "health_enemy": 10
+            "7-1": "wall", "7-2": "wall", "7-3": "", "7-4": "wall", "7-5": "wall"
         }
     elif chunk_id == 2:
         chunk = {
@@ -232,9 +260,9 @@ def generate_chunk():
             "2-1": "wall", "2-2": "", "2-3": "", "2-4": "", "2-5": "wall",
             "3-1": "wall", "3-2": "wall", "3-3": "", "3-4": "wall", "3-5": "wall",
             "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
-            "5-1": "", "5-2": "", "5-3": "boss", "5-4": "", "5-5": "",
+            "5-1": "", "5-2": "", "5-3": "boss_25", "5-4": "", "5-5": "",
             "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
-            "7-1": "", "7-2": "", "7-3": "", "7-4": "", "7-5": "", "health_enemy": 25
+            "7-1": "", "7-2": "", "7-3": "", "7-4": "", "7-5": ""
         }
     elif chunk_id == 4:
         chunk = {
@@ -242,19 +270,19 @@ def generate_chunk():
             "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
             "3-1": "bullets", "3-2": "wall", "3-3": "wall", "3-4": "wall", "3-5": "wall",
             "4-1": "", "4-2": "", "4-3": "", "4-4": "", "4-5": "",
-            "5-1": "", "5-2": "", "5-3": "enemy1", "5-4": "wall", "5-5": "",
+            "5-1": "", "5-2": "", "5-3": "enemy1_10", "5-4": "wall", "5-5": "",
             "6-1": "", "6-2": "bullets", "6-3": "bullets", "6-4": "wall", "6-5": "",
-            "7-1": "wall", "7-2": "wall", "7-3": "wall", "7-4": "wall", "7-5": "", "health_enemy": 10
+            "7-1": "wall", "7-2": "wall", "7-3": "wall", "7-4": "wall", "7-5": ""
         }
     elif chunk_id == 5:
         chunk = {
             "1-1": "", "1-2": "", "1-3": "", "1-4": "", "1-5": "",
             "2-1": "", "2-2": "", "2-3": "", "2-4": "", "2-5": "",
-            "3-1": "", "3-2": "", "3-3": "enemy1", "3-4": "", "3-5": "",
+            "3-1": "", "3-2": "", "3-3": "enemy2_15", "3-4": "", "3-5": "",
             "4-1": "", "4-2": "wall", "4-3": "wall", "4-4": "wall", "4-5": "",
             "5-1": "", "5-2": "", "5-3": "medkit", "5-4": "", "5-5": "",
             "6-1": "", "6-2": "", "6-3": "", "6-4": "", "6-5": "",
-            "7-1": "wall", "7-2": "wall", "7-3": "", "7-4": "wall", "7-5": "wall", "health_enemy": 10
+            "7-1": "wall", "7-2": "wall", "7-3": "", "7-4": "wall", "7-5": "wall"
         }
     elif chunk_id == 6:
         chunk = {
@@ -271,7 +299,9 @@ def generate_chunk():
 
 def look(x, y, direction, lvldict):
     left = ""
+    left_diag = ""
     middle = ""
+    right_diag = ""
     right = ""
     if direction == 1:
         coords = str(y) + "-" + str(x - 1)
@@ -285,21 +315,27 @@ def look(x, y, direction, lvldict):
         else:
             right = "wall"
         coords = str(y + 1) + "-" + str(x)
-        if (y + 1) != 8:
+        try:
             middle = lvldict[coords]
+        except:
+            pass
         coords = str(y + 1) + "-" + str(x - 1)
-        if (y + 1) != 8 and (x - 1) != 0 and left == "":
+        try:
             if lvldict[coords] == "wall":
-                left = "wall2"
+                left_diag = "wall2"
             else:
-                left = lvldict[coords]
+                left_diag = lvldict[coords]
+        except:
+            pass
 
         coords = str(y + 1) + "-" + str(x + 1)
-        if (y + 1) != 8 and (x + 1) != 6 and right == "":
+        try:
             if lvldict[coords] == "wall":
-                right = "wall2"
+                right_diag = "wall2"
             else:
-                right = lvldict[coords]
+                right_diag = lvldict[coords]
+        except:
+            pass        
     elif direction == 3:
         coords = str(y) + "-" + str(x + 1)
         if (x + 1) != 6:
@@ -317,28 +353,27 @@ def look(x, y, direction, lvldict):
         else:
             middle = "wall"
         coords = str(y - 1) + "-" + str(x + 1)
-        if (y - 1) != 0 and (x + 1) != 6 and left == "":
+        if (y - 1) != 0 and (x + 1) != 6:
             if lvldict[coords] == "wall":
-                left = "wall2"
+                left_diag = "wall2"
             else:
-                left = lvldict[coords]
-        elif (y - 1) == 0 and left == "" or (x + 1) == 6 and left == "":
+                left_diag = lvldict[coords]
+        elif (y - 1) == 0 and left == "" or (x + 1) == 6:
             left = "wall2"
         coords = str(y - 1) + "-" + str(x - 1)
-        if (y - 1) != 0 and (x - 1) != 0 and right == "":
+        if (y - 1) != 0 and (x - 1) != 0:
             if lvldict[coords] == "wall":
-                right = "wall2"
+                right_diag = "wall2"
             else:
-                right = lvldict[coords]
-        elif (y - 1) == 0 and right == "" or (x - 1) == 0 and right == "":
-            right = "wall2"
+                right_diag = lvldict[coords]
+        elif (y - 1) == 0 or (x - 1) == 0:
+            right_diag = "wall2"
     elif direction == 0:
         coords = str(y + 1) + "-" + str(x)
-        if (y + 1) != 8:
+        try:
             left = leveldict[coords]
-        else:
-            left = "wall"
-
+        except:
+            pass
         coords = str(y - 1) + "-" + str(x)
         if (y - 1) != 0:
             right = leveldict[coords]
@@ -350,21 +385,23 @@ def look(x, y, direction, lvldict):
         else:
             middle = "wall"
         coords = str(y + 1) + "-" + str(x + 1)
-        if (x + 1) != 6 and (y + 1) != 8 and left == "":
+        try:
             if lvldict[coords] == "wall":
-                left = "wall2"
+                left_diag = "wall2"
+            elif (x + 1) == 6:
+                left_diag = "wall2"            
             else:
-                left = lvldict[coords]
-        elif (x + 1) == 6 and left == "":
-            left = "wall2"
+                left_diag = lvldict[coords]
+        except:
+            pass
         coords = str(y - 1) + "-" + str(x + 1)
-        if (x + 1) != 6 and (y - 1) != 0 and right == "":
+        if (x + 1) != 6 and (y - 1) != 0:
             if lvldict[coords] == "wall":
-                right = "wall2"
+                right_diag = "wall2"
             else:
-                right = lvldict[coords]
-        elif (y - 1) == 0 and right == "" or (x + 1) == 6 and right == "":
-            right = "wall2"
+                right_diag = lvldict[coords]
+        elif (y - 1) == 0 or (x + 1) == 6:
+            right_diag = "wall2"
     elif direction == 2:
         coords = str(y - 1) + "-" + str(x)
         if (y - 1) != 0:
@@ -372,185 +409,277 @@ def look(x, y, direction, lvldict):
         else:
             left = "wall"
         coords = str(y + 1) + "-" + str(x)
-        if (y + 1) != 8:
+        try:
             right = leveldict[coords]
+        except:
+            pass
         coords = str(y) + "-" + str(x - 1)
         if (x - 1) != 0:
             middle = leveldict[coords]
         else:
             middle = "wall"
         coords = str(y + 1) + "-" + str(x - 1)
-        if (x - 1) != 0 and (y + 1) != 8 and right == "":
+        try:
             if lvldict[coords] == "wall":
-                right = "wall2"
+                right_diag = "wall2"
+            elif (y + 1) == 8 and right == "" or (x - 1) == 0:
+                right_diag = "wall2"            
             else:
-                right = lvldict[coords]
-        elif (y + 1) == 8 and right == "" or (x - 1) == 0 and right == "":
-            right = "wall2"
+                right_diag = lvldict[coords]
+        except:
+            pass
         coords = str(y - 1) + "-" + str(x - 1)
-        if (x - 1) != 0 and (y - 1) != 0 and left == "":
+        if (x - 1) != 0 and (y - 1) != 0:
             if lvldict[coords] == "wall":
-                left = "wall2"
+                left_diag = "wall2"
             else:
-                left = lvldict[coords]
-        elif (y - 1) == 0 and left == "" or (x - 1) == 0 and left == "":
-            left = "wall2"
+                left_diag = lvldict[coords]
+        elif (y - 1) == 0 or (x - 1) == 0:
+            left_diag = "wall2"
 
     else:
         pass
-    print(left, middle, right)
-    return left, middle, right
+    return left, middle, right,left_diag,right_diag
 
 
-def drawScreen(left, middle, right):
+def drawScreen(left, middle, right,left_diag,right_diag):
+    sc.blit(pygame.transform.scale(image_floor, (300 * SIZE, 150 * SIZE)), (0*SIZE + indent_horizontal, 150*SIZE))
+    if left_diag == "wall":
+        sc.blit(pygame.transform.scale(image_wall_l, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif left_diag == "wall2":
+        sc.blit(pygame.transform.scale(image_wall_2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif left_diag == "bullets":
+        sc.blit(pygame.transform.scale(image_bullets, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "medkit":
+        sc.blit(pygame.transform.scale(image_medkit, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal,25 * SIZE))
+    elif left_diag == "knife_pickup":
+        sc.blit(pygame.transform.scale(image_knife_sprite, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif "enemy1" in left_diag and not("corpse" in left_diag):
+        sc.blit(pygame.transform.scale(image_enemy1, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy1_atk" in left_diag:
+        sc.blit(pygame.transform.scale(image_enemy1_atk, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif left_diag == "enemy1_corpse_0":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse0, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy1_corpse_1":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse1, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy1_corpse_2":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse2, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy1_corpse_3":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse3, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy2" in left_diag and not("corpse" in left_diag):
+        sc.blit(pygame.transform.scale(image_enemy2, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy2_atk" in left_diag:
+        sc.blit(pygame.transform.scale(image_enemy2_atk, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif left_diag == "enemy2_corpse_0":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse0, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy2_corpse_1":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse1, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy2_corpse_2":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse2, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "enemy2_corpse_3":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse3, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "boss" in left_diag and not("corpse" in left_diag):
+        sc.blit(pygame.transform.scale(image_boss, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "boss_atk" in left_diag:
+        sc.blit(pygame.transform.scale(image_boss_atk, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))    
+    elif left_diag == "boss_corpse_0":
+        sc.blit(pygame.transform.scale(image_boss_corpse0, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "boss_corpse_1":
+        sc.blit(pygame.transform.scale(image_boss_corpse1, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))
+    elif left_diag == "boss_corpse_2":
+        sc.blit(pygame.transform.scale(image_boss_corpse2, (50 * SIZE, 150 * SIZE)), (25 * SIZE + indent_horizontal, 25 * SIZE))    
     if left == "wall":
-        sc.blit(pygame.transform.scale(WallL_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_wall_l, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "wall2":
-        sc.blit(pygame.transform.scale(Wall2_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_wall_2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "bullets":
-        sc.blit(pygame.transform.scale(Bullets_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_bullets, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "medkit":
-        sc.blit(pygame.transform.scale(Medkit_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_medkit, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "knife_pickup":
-        sc.blit(pygame.transform.scale(KnifePick_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
-    elif left == "enemy1":
-        sc.blit(pygame.transform.scale(Enemy1_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
-    elif left == "enemy1_atk":
-        sc.blit(pygame.transform.scale(Enemy1Atk_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
+        sc.blit(pygame.transform.scale(image_knife_sprite, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
+    elif "enemy1" in left and not("corpse" in left):
+        sc.blit(pygame.transform.scale(image_enemy1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif "enemy1_atk" in left:
+        sc.blit(pygame.transform.scale(image_enemy1_atk, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
     elif left == "enemy1_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy1_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy1_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy1_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse3, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
-    elif left == "enemy2":
-        sc.blit(pygame.transform.scale(Enemy2_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
-    elif left == "enemy2_atk":
-        sc.blit(pygame.transform.scale(Enemy2Atk_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
+        sc.blit(pygame.transform.scale(image_enemy1_corpse3, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif "enemy2" in left and not("corpse" in left):
+        sc.blit(pygame.transform.scale(image_enemy2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif "enemy2_atk" in left:
+        sc.blit(pygame.transform.scale(image_enemy2_atk, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))        
     elif left == "enemy2_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy2_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy2_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "enemy2_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse3, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
-    elif left == "boss":
-        sc.blit(pygame.transform.scale(Boss_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
-    elif left == "boss_atk":
-        sc.blit(pygame.transform.scale(BossAtk_Image, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_enemy2_corpse3, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif "boss" in left and not("corpse" in left):
+        sc.blit(pygame.transform.scale(image_boss, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    elif "boss_atk" in left:
+        sc.blit(pygame.transform.scale(image_boss_atk, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))    
     elif left == "boss_corpse_0":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse0, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "boss_corpse_1":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse1, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
     elif left == "boss_corpse_2":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse2, (100 * SIZE, 300 * SIZE)), (0 + indent_horizontal, 0))
+    if right_diag == "wall":
+        sc.blit(pygame.transform.scale(image_wall_r, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+    elif right_diag == "wall2":
+        sc.blit(pygame.transform.scale(image_wall_2, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+    elif right_diag == "bullets":
+        sc.blit(pygame.transform.scale(image_bullets, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "medkit":
+        sc.blit(pygame.transform.scale(image_medkit, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal,25 * SIZE))
+    elif right_diag == "knife_pickup":
+        sc.blit(pygame.transform.scale(image_knife_sprite, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif "enemy1" in right_diag and not("corpse" in right_diag):
+        sc.blit(pygame.transform.scale(image_enemy1, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy1_atk" in right_diag:
+        sc.blit(pygame.transform.scale(image_enemy1_atk, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif right_diag == "enemy1_corpse_0":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse0, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy1_corpse_1":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse1, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy1_corpse_2":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse2, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy1_corpse_3":
+        sc.blit(pygame.transform.scale(image_enemy1_corpse3, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy2" in right_diag and not("corpse" in right_diag):
+        sc.blit(pygame.transform.scale(image_enemy2, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "enemy2_atk" in right_diag:
+        sc.blit(pygame.transform.scale(image_enemy2_atk, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))        
+    elif right_diag == "enemy2_corpse_0":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse0, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy2_corpse_1":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse1, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy2_corpse_2":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse2, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "enemy2_corpse_3":
+        sc.blit(pygame.transform.scale(image_enemy2_corpse3, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "boss" in right_diag and not("corpse" in right_diag):
+        sc.blit(pygame.transform.scale(image_boss, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif "boss_atk" in right_diag:
+        sc.blit(pygame.transform.scale(image_boss_atk, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))    
+    elif right_diag == "boss_corpse_0":
+        sc.blit(pygame.transform.scale(image_boss_corpse0, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "boss_corpse_1":
+        sc.blit(pygame.transform.scale(image_boss_corpse1, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))
+    elif right_diag == "boss_corpse_2":
+        sc.blit(pygame.transform.scale(image_boss_corpse2, (50 * SIZE, 150 * SIZE)), (225 * SIZE + indent_horizontal, 25 * SIZE))     
     if right == "wall":
-        sc.blit(pygame.transform.scale(WallR_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_wall_r, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
     elif right == "wall2":
-        sc.blit(pygame.transform.scale(Wall2_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_wall_2, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
     elif right == "bullets":
-        sc.blit(pygame.transform.scale(Bullets_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_bullets, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
     elif right == "medkit":
-        sc.blit(pygame.transform.scale(Medkit_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_medkit, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
     elif right == "knife_pickup":
-        sc.blit(pygame.transform.scale(KnifePick_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
-    elif right == "enemy1":
-        sc.blit(pygame.transform.scale(Enemy1_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
-    elif right == "enemy1_atk":
-        sc.blit(pygame.transform.scale(Enemy1Atk_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_knife_sprite, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
+    elif "enemy1" in right and not("corpse" in right):
+        sc.blit(pygame.transform.scale(image_enemy1, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+    elif "enemy1_atk" in right:
+        sc.blit(pygame.transform.scale(image_enemy1_atk, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
     elif right == "enemy1_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy1_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy1_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy1_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse3, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
-    elif right == "enemy2":
-        sc.blit(pygame.transform.scale(Enemy2_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
-    elif right == "enemy2_atk":
-        sc.blit(pygame.transform.scale(Enemy2Atk_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_enemy1_corpse3, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+    elif "enemy2" in right and not("corpse" in right):
+        sc.blit(pygame.transform.scale(image_enemy2, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+    elif "enemy2_atk" in right:
+        sc.blit(pygame.transform.scale(image_enemy2_atk, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
     elif right == "enemy2_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy2_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy2_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "enemy2_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse3, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
-    elif right == "boss":
-        sc.blit(pygame.transform.scale(Boss_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
-    elif right == "boss_atk":
-        sc.blit(pygame.transform.scale(BossAtk_Image, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_enemy2_corpse3, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+    elif "boss" in right and not("corpse" in right):
+        sc.blit(pygame.transform.scale(image_boss, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))
+    elif "boss_atk" in right:
+        sc.blit(pygame.transform.scale(image_boss_atk, (100 * SIZE, 300 * SIZE)), (200 * SIZE + indent_horizontal, 0))    
     elif right == "boss_corpse_0":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse0, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "boss_corpse_1":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse1, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     elif right == "boss_corpse_2":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse2, (100 * SIZE, 300 * SIZE)), (200*SIZE + indent_horizontal, 0))
     if middle == "wall2" or middle == "wall":
-        sc.blit(pygame.transform.scale(Wall2_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_wall_2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "medkit":
-        sc.blit(pygame.transform.scale(Medkit_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_medkit, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "knife_pickup":
-        sc.blit(pygame.transform.scale(KnifePick_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_knife_sprite, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
     elif middle == "bullets":
-        sc.blit(pygame.transform.scale(Bullets_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "enemy1":
-        sc.blit(pygame.transform.scale(Enemy1_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "enemy1_atk":
-        sc.blit(pygame.transform.scale(Enemy1Atk_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_bullets, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "enemy1" in middle and not("corpse" in middle):
+        sc.blit(pygame.transform.scale(image_enemy1, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "enemy1_atk" in middle:
+        sc.blit(pygame.transform.scale(image_enemy1_atk, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
     elif middle == "enemy1_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse0, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse0, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy1_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse1, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse1, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy1_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy1_corpse2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy1_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy1_Image_corpse3, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "enemy2":
-        sc.blit(pygame.transform.scale(Enemy2_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "enemy2_atk":
-        sc.blit(pygame.transform.scale(Enemy2Atk_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))        
+        sc.blit(pygame.transform.scale(image_enemy1_corpse3, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "enemy2" in middle and not("corpse" in middle):
+        sc.blit(pygame.transform.scale(image_enemy2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "enemy2_atk" in middle:
+        sc.blit(pygame.transform.scale(image_enemy2_atk, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))        
     elif middle == "enemy2_corpse_0":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse0, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse0, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy2_corpse_1":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse1, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse1, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy2_corpse_2":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_enemy2_corpse2, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
     elif middle == "enemy2_corpse_3":
-        sc.blit(pygame.transform.scale(Enemy2_Image_corpse3, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "boss":
-        sc.blit(pygame.transform.scale(Boss_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
-    elif middle == "boss_atk":
-        sc.blit(pygame.transform.scale(BossAtk_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
+        sc.blit(pygame.transform.scale(image_enemy2_corpse3, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "boss" in middle and not("corpse" in middle):
+        sc.blit(pygame.transform.scale(image_boss, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))
+    elif "boss_atk" in middle:
+        sc.blit(pygame.transform.scale(image_boss_atk, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, 0))    
     elif middle == "boss_corpse_0":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse0, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse0, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
     elif middle == "boss_corpse_1":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse1, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse1, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
     elif middle == "boss_corpse_2":
-        sc.blit(pygame.transform.scale(Boss_Image_corpse2, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
+        sc.blit(pygame.transform.scale(image_boss_corpse2, (100 * SIZE, 300 * SIZE)), (100*SIZE + indent_horizontal, 0))
 
 
 def drawWeapon(state, weapon):
     if weapon == "fist":
         if state == "idle":
-            sc.blit(pygame.transform.scale(HandIdle_Image, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
+            sc.blit(pygame.transform.scale(image_hand, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
         elif state == "attack":
-            sc.blit(pygame.transform.scale(HandIdle_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, -10 * SIZE))
+            sc.blit(pygame.transform.scale(image_hand, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, -10 * SIZE))
     elif weapon == "pistol":
         if state == "idle":
-            sc.blit(pygame.transform.scale(GunIdle_Image, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
+            sc.blit(pygame.transform.scale(image_lightgun_idle, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
         elif state == "attack":
-            sc.blit(pygame.transform.scale(GunAtk_Image, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
+            sc.blit(pygame.transform.scale(image_lightgun_atk, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, 0))
     elif weapon == "knife":
         if state == "idle":
-            sc.blit(pygame.transform.scale(Knife_Image, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, -10 * SIZE))
+            sc.blit(pygame.transform.scale(image_kinfe, (100 * SIZE, 300 * SIZE)), (125 * SIZE + indent_horizontal, -10 * SIZE))
         elif state == "attack":
-            sc.blit(pygame.transform.scale(Knife_Image, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, -30 * SIZE))
+            sc.blit(pygame.transform.scale(image_kinfe, (100 * SIZE, 300 * SIZE)), (100 * SIZE + indent_horizontal, -30 * SIZE))
 
 
 def showAchivement(name,image):
@@ -559,7 +688,7 @@ def showAchivement(name,image):
     sc.blit(achivement_text, [SIZE * 35 + indent_horizontal, SIZE * 10])
     
 def drawHUD(hp, ammo, lastact):
-    sc.blit(pygame.transform.scale(Statusbar_Image, (300 * SIZE, 30 * SIZE)), (0 * SIZE + indent_horizontal, 270* SIZE))
+    sc.blit(pygame.transform.scale(image_statusbar, (300 * SIZE, 30 * SIZE)), (0 * SIZE + indent_horizontal, 270* SIZE))
     hp_text = font.render(str(hp), 1, RED)
     ammo_text = font.render(str(ammo), 1, RED)
 
@@ -583,11 +712,23 @@ def drawHUD(hp, ammo, lastact):
 damage = 0
 turn = "player"
 current_weapon = "pistol"
+no_beautiful_debug = False
+sc = pygame.display.set_mode((infoObject.current_w, SIZE * 300), pygame.FULLSCREEN)
+for argument in arguments:
+    if "no-debug" in argument:
+        no_beautiful_debug = True
+    elif "window-mode" in argument:
+        indent_horizontal = 0
+        SIZE = 2
+        sc = pygame.display.set_mode((SIZE*300, SIZE * 300))
+        font = pygame.font.Font("pixel_font.ttf", 40)
+        small_font = pygame.font.Font("pixel_font.ttf", 8)
+  
 while 1:
     if last_key == "up":
         if mode == "game":
             turn = "enemy"
-            disp_left, disp_middle, disp_right = look(x, y, direction, leveldict)
+            disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag = look(x, y, direction, leveldict)
             if disp_middle == "" or disp_middle == "enemy1_corpse_3" or disp_middle == "boss_corpse_2" or disp_middle == "enemy2_corpse_3" or disp_middle == "bullets" or disp_middle == "medkit" or disp_middle == "knife_pickup":
                 if disp_middle == "bullets":
                     if direction == 0:
@@ -635,11 +776,16 @@ while 1:
                         if health > 100:
                             health = 100
                 if direction == 1:
-                    if y == 7:
-                        y = 1
-                        leveldict = generate_chunk()
-                    else:
+                    coords = str(y+1) + "-" + str(x)                   
+                    try:
+                        spare_string = leveldict[coords]
                         y += 1
+                    except:
+                        if not(is_custom_level):
+                            y = 1
+                            leveldict = generate_chunk()                  
+                        elif is_custom_level:
+                            mode = "title"
                 elif direction == 0:
                     if x == 5:
                         pass
@@ -666,11 +812,16 @@ while 1:
                     option = 1
                 else:
                     option -= 1
+        elif mode == "title":
+            if option == 0:
+                option = 1
+            else:
+                option -= 1            
     if last_key == "down":
                     if mode == "game":
                         turn = "enemy"
                         if y - 1 != 0:
-                            disp_left, disp_middle, disp_right = look(x, y - 1, direction, leveldict)
+                            disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag = look(x, y - 1, direction, leveldict)
                             if disp_middle == "" or disp_middle == "enemy1_corpse_3" or disp_middle == "boss_corpse_2" or disp_middle == "enemy2_corpse_3" or disp_middle == "bullets" or disp_middle == "medkit" or disp_middle == "knife_pickup":
                                 if disp_middle == "bullets":
                                     if direction == 0:
@@ -717,12 +868,13 @@ while 1:
                                     if health > 100:
                                         health = 100
                                 if direction == 3:
-                                    if y == 7:
+                                    try:
+                                        coords = str(y + 1) + "-" + str(x)
+                                        a = leveldict[coords]
+                                        y += 1
+                                    except:
                                         y = 1
                                         leveldict = generate_chunk()
-                                        print(leveldict)
-                                    else:
-                                        y += 1
                                 elif direction == 2:
                                     if x == 5:
                                         pass
@@ -749,7 +901,12 @@ while 1:
                             if option == 1:
                                 option = 0
                             else:
-                                option += 1        
+                                option += 1  
+                    elif mode == "title":
+                        if option == 1:
+                            option = 0
+                        else:
+                            option += 1                         
     elif last_key == "left":
         if mode == "game":
             turn = "enemy"
@@ -791,20 +948,20 @@ while 1:
     elif last_key == "space":
         if mode == "game":
             turn = "enemy"
-            right, middle, left = look(x, y, direction, leveldict)
+            right, middle, left,disp_left_diag,disp_right_diag = look(x, y, direction, leveldict)
             if current_weapon == "fist":
                 damage = randint(4, 11)
                 weapon_action = "attack"
             elif current_weapon == "pistol":
                 if ammo != 0:
-                    sound_shoot.play()
+                    snd_shoot.play()
                     weapon_action = "attack"
                     damage = randint(6, 15)
                     ammo -= 1
             elif current_weapon == "knife":
                 weapon_action = "attack"
                 damage = 100
-                sound_knife_slash.play()
+                snd_knife_slash.play()
             if direction == 0:
                 coords = str(y) + "-" + str(x + 1)
             elif direction == 1:
@@ -813,11 +970,25 @@ while 1:
                 coords = str(y) + "-" + str(x - 1)
             elif direction == 3:
                 coords = str(y - 1) + "-" + str(x)
-            if middle == "enemy1" or middle == "enemy2" or middle == "boss":
-                leveldict["health_enemy"] = leveldict["health_enemy"] - damage
-                if leveldict["health_enemy"] <= 0:
-                    leveldict[coords] = leveldict[coords] + "_corpse_0"
+            if "enemy1" in middle and not("corpse" in middle)  or "enemy2" in middle and not("corpse" in middle) or "boss" in middle and not("corpse" in middle):
+                enemy_tile_contents = leveldict[coords]
+                length_text = len(enemy_tile_contents)
+                enemy_hp = int(enemy_tile_contents[length_text -2 :]) 
+                enemy_hp -= damage
+                stringed_enemy_hp = str(enemy_hp)
+                if len(stringed_enemy_hp) == 1:
+                    enemy_hp = "0" + str(enemy_hp)
+                if int(enemy_hp) <= 0:
+                    end_of_read = length_text-2
+                    length_text = len(enemy_tile_contents)
+                    leveldict[coords] =  enemy_tile_contents[0:end_of_read] + "corpse_0"
                     tick = 0
+                else:
+                    length_text = len(enemy_tile_contents)
+                    end_of_read = length_text-2
+                    enemy_tile_contents = enemy_tile_contents[0:end_of_read]
+                    enemy_tile_contents = enemy_tile_contents + enemy_hp
+                    leveldict[coords] = enemy_tile_contents
             damage = 0
                 
         
@@ -860,63 +1031,112 @@ while 1:
                 health = 100
                 ammo = 5                
             screen = 0
-            opton = 0
+            option = 0
             mode = "game"
         elif mode == "title":
-            mode = "game"
-            health = 100
-            ammo = 5
-            x = 3
-            y = 1
-            direction = 1
-            leveldict_new = leveldict_collis_test.copy()
-            leveldict = leveldict_new.copy()
-            turn = "player"
-            bgm_oldoffice.play(-1)
+            if option == 0:
+                mode = "game"
+                health = 100
+                ammo = 5
+                x = 3
+                y = 1
+                direction = 1
+                leveldict_new = leveldict_collis_test.copy()
+                leveldict = leveldict_new.copy()
+                turn = "player"
+                bgm_oldoffice.play(-1)
+                is_custom_level = False
+            elif option == 1:
+                mode ="custom_level"
         elif mode == "game_over":
     
             mode = "title"
     if has_knife == True and achivement1 != True:
-            sound_achivement1.play()
+            sound_achivemment1.play()
     if mode == "game":
-        disp_left, disp_middle, disp_right = look(x, y, direction, leveldict)
-        print(disp_left, disp_middle, disp_right)
-        refresh(disp_left, disp_middle, disp_right, health, ammo, weapon_action, current_weapon)
+        disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag = look(x, y, direction, leveldict)
+        refresh(disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag, health, ammo, weapon_action, current_weapon) 
         if has_knife == True and achivement1 != True:
-            showAchivement("Genocide",Achiv1_Image)       
+            showAchivement("Genocide",image_achiv1)       
             todo = "achivement1"
     elif mode == "game_over":
         pygame.mixer.music.pause()
-        disp_left, disp_middle, disp_right = look(x, y, direction, leveldict)
-        print(disp_left, disp_middle, disp_right)
-        refresh(disp_left, disp_middle, disp_right, health, ammo, weapon_action, current_weapon)
-        text = font.render("You died!", 1, RED)
-        sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 5])
-        text = font.render("[Enter] to quit to tilte.", 1, RED)
-        sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 25])
-        text = font.render("[Space] to respawn.", 1, RED)
-        sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 45])
+        disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag = look(x, y, direction, leveldict)
+        refresh(disp_left, disp_middle, disp_right,disp_left_diag,disp_right_diag, health, ammo, weapon_action, current_weapon) 
+        if useLocalization:
+            text = font.render(text_localization[10], 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 5])
+            text = font.render(text_localization[11], 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 25])
+            text = font.render(text_localization[12], 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 45])            
+        else:
+            text = font.render("You died!", 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 5])
+            text = font.render("[Enter] to quit to tilte.", 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 25])
+            text = font.render("[Space] to respawn.", 1, RED)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 45])            
     elif mode == "title":
         sc.fill(BLACK)
-        sc.blit(pygame.transform.scale(Title_Image, (84 * SIZE, 84 * SIZE)), (110* SIZE + indent_horizontal, 15* SIZE))
-        text = font.render("Compystein 3-D Beta 2", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 55])
-        text = font.render("Press [Enter] to start!", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 10, SIZE * 135])
+        sc.blit(pygame.transform.scale(image_title, (84 * SIZE, 84 * SIZE)), (110* SIZE + indent_horizontal, 15* SIZE))
+        text = font.render("Compystein 3-D", 1, GREEN)
+        sc.blit(text, [indent_horizontal + SIZE * 60, SIZE * 55])            
+        if option == 0:
+            if not(useLocalization):
+                text = font.render(">Singlepayer", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render("Custom levels", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])  
+            else:
+                text = font.render(text_localization[2], 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render(text_localization[1], 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])                  
+        elif option == 1:
+            if not(useLocalization):
+                text = font.render("Singlepayer", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render(">Custom levels", 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])  
+            else:
+                text = font.render(text_localization[0], 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 120])
+                text = font.render(text_localization[3], 1, WHITE)
+                sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])              
+        text = small_font.render("Copyright 2020 Alphen95(Luigi180059)", 1, WHITE)
+        sc.blit(text, [indent_horizontal + SIZE * 100, SIZE * 240])   
+        text = font.render("Release!", 1, RED)
+        text =pygame.transform.rotate(text, 14)
+        sc.blit(text, [indent_horizontal + SIZE * 120, SIZE * 60])            
     elif mode == "help":
         sc.fill(GRAY)
-        text = font.render("Compystein 3-D Beta 2 Help", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 10, SIZE * 30])
-        text = font.render("Walk : arrow keys", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 65])
-        text = font.render("Attack : [space]", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 85])
-        text = font.render("Debug menu : [D]", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 105])
-        text = font.render("Debug menu cofirm : [Enter]", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])
-        text = font.render("Leave game : [Q]", 1, GREEN)
-        sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])   
+        if useLocalization:
+            text = font.render(text_localization[4], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 40, SIZE * 30])
+            text = font.render(text_localization[5], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 65])
+            text = font.render(text_localization[6], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 85])
+            text = font.render(text_localization[7], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 105])
+            text = font.render(text_localization[8], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])
+            text = font.render(text_localization[9], 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])   
+        else:
+            text = font.render("Compystein 3-D Help", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 40, SIZE * 30])
+            text = font.render("Walk : arrow keys", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 65])
+            text = font.render("Attack : [space]", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 85])
+            text = font.render("Debug menu : [D]", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 105])
+            text = font.render("Menu cofirm : [Enter]", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])
+            text = font.render("Leave game : [Q]", 1, GREEN)
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])               
     elif mode == "debug":
         sc.fill(BLACK)
         text = font.render("DEBUG MENU", 1, WHITE)
@@ -975,75 +1195,77 @@ while 1:
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])
                 text = font.render(">Enemy test", 1, WHITE)
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])
-    if specialtile!="":
-        leveldict[specialtile] =spare_string[0:-4]
-        specialtile = ""
-        pprint(leveldict)
-        print("a")
-        print(spare_string)        
+    elif mode == "custom_level":
+        sc.fill(BLACK)
+        if useLocalization:
+            text = font.render(text_localization[13], 1, WHITE)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])   
+        else:
+            text = font.render("Enter file name for custom level:", 1, WHITE)
+            sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 80])
+        text = font.render(path_custom_level, 1, WHITE)
+        sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 100])            
+    for specialtile in specialtiles:
+        spare_string = specialtile[1]
+        leveldict[specialtile[0]] =spare_string
+    specialtiles = []
     pygame.display.update()
     pygame.time.delay(100)
     tick += 1
     last_key = ""
     if turn != "player":
         turn = "player"
-        b = 0
         for tile in leveldict:
-            if b != 1:
-                if leveldict[tile] == "enemy1" or leveldict[tile] == "enemy2" or leveldict[tile] == "boss":
-                    pprint(leveldict)
-                    print(tile)
-                    print("b",len(tile))
-                    spare_string = tile[2:3]
-                    print("a",spare_string)
-                    enemy_X = int(spare_string)
-                    spare_string = tile[:1]
-                    enemy_Y = int(spare_string)
-                    if enemy_X + 1 == x and enemy_Y == y or enemy_X - 1 == x and enemy_Y == y or enemy_X == x and enemy_Y + 1 == y or enemy_X == x and enemy_Y - 1 == y :
-                        if leveldict[tile] == "enemy1":
-                            damage = randint(1, 6)
-                        elif leveldict[tile] == "enemy2":
-                            damage = randint(3, 10)
-                        elif leveldict[tile] == "boss":
-                            damage = randint(7, 16)
-                        health = health - damage                        
-                        spare_string = str(leveldict[tile])
-                        leveldict[tile] = leveldict[tile] +"_atk"
-                        specialtile = tile
-                        print("uwu",specialtile)
-                        damage = 0
-                        if health < 1:
-                            mode = "game_over"
-                    else:
-                        side = randint(0, 3)
-                        right, middle, left = look(enemy_X, enemy_Y, side, leveldict)
-                        if middle == "":
-                            if side == 1:
-                                if enemy_Y == 7:
-                                    pass
-                                else:
-                                    enemy_Y += 1
-                            elif side == 0:
-                                if enemy_X == 5:
-                                    pass
-                                else:
-                                    enemy_X += 1
-                            elif side == 3:
-                                if enemy_Y == 1:
-                                    pass
-                                else:
-                                    enemy_Y -= 1
-                            elif side == 2:
-                                if enemy_X == 1:
-                                    pass
-                                else:
-                                    enemy_X -= 1
+            if "enemy1" in leveldict[tile] and not("corpse" in leveldict[tile]) or "enemy2" in leveldict[tile] and not("corpse" in leveldict[tile]) or "boss" in leveldict[tile] and not("corpse" in leveldict[tile]):
+                spare_string = tile[2:3]
+                enemy_X = int(spare_string)
+                spare_string = tile[:1]
+                enemy_Y = int(spare_string)
+                if enemy_X + 1 == x and enemy_Y == y or enemy_X - 1 == x and enemy_Y == y or enemy_X == x and enemy_Y + 1 == y or enemy_X == x and enemy_Y - 1 == y :
+                    if "enemy1" in leveldict[tile]:
+                        damage = randint(1, 6)
+                    elif "enemy2" in leveldict[tile]:
+                        damage = randint(3, 10)
+                    elif "boss" in leveldict[tile]:
+                        damage = randint(7, 16)
+                    health = health - damage                        
+                    spare_string = str(leveldict[tile])
+                    leveldict[tile] = leveldict[tile] +"_atk"
+                    tup_args = (tile,spare_string)
+                    specialtiles.append(tup_args)
+                    damage = 0
+                    if health < 1:
+                        mode = "game_over"
+                else:
+                    side = randint(0, 3)
+                    right, middle, left,disp_left_diag,disp_right_diag = look(enemy_X, enemy_Y, side, leveldict)
+                    if middle == "":
+                        if side == 1:
+                            if enemy_Y == 7:
+                                pass
+                            else:
+                                enemy_Y += 1
+                        elif side == 0:
+                            if enemy_X == 5:
+                                pass
+                            else:
+                                enemy_X += 1
+                        elif side == 3:
+                            if enemy_Y == 1:
+                                pass
+                            else:
+                                enemy_Y -= 1
+                        elif side == 2:
+                            if enemy_X == 1:
+                                pass
+                            else:
+                                enemy_X -= 1
 
-                    coords = str(enemy_Y) + "-" + str(enemy_X)
-                    spare_string = leveldict[tile]
-                    leveldict[coords] = spare_string
-                    if coords != tile:
-                        leveldict[tile] = ""
+                coords = str(enemy_Y) + "-" + str(enemy_X)
+                spare_string = leveldict[tile]
+                leveldict[coords] = spare_string
+                if coords != tile:
+                    leveldict[tile] = ""
     if weapon_action == "attack":
         weapon_action = "idle"
     turn = "player"
@@ -1051,7 +1273,6 @@ while 1:
         if todo == "achivement1":
             achivement1 = True
         for cell in leveldict:
-            print(cell)
             if leveldict[cell] == "enemy1_corpse_0":
                 leveldict[cell] = "enemy1_corpse_1"
             elif leveldict[cell] == "enemy1_corpse_1":
@@ -1068,32 +1289,56 @@ while 1:
                 leveldict[cell] = "boss_corpse_1"
             elif leveldict[cell] == "boss_corpse_1":
                 leveldict[cell] = "boss_corpse_2"
-    for i in pygame.event.get():
-        if i.type == pygame.QUIT:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             exit()
-        elif i.type == pygame.KEYDOWN:
-            if i.key == pygame.K_q:
-                pprint(leveldict)
-                exit()
-            elif i.key == pygame.K_d:
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                quitted = True
+                sys.exit()
+                break
+            elif event.key == pygame.K_d and mode != "custom_level":
                 last_key = "d"
-            elif i.key == pygame.K_h:
+            elif event.key == pygame.K_h and mode != "custom_level":
                 last_key = "h"
-            elif i.key == pygame.K_UP:
+            elif event.key == pygame.K_UP and mode != "custom_level":
                 last_key = "up"
-            elif i.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and mode != "custom_level":
                 last_key = "left"
-            elif i.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and mode != "custom_level":
                 last_key = "right"
-            elif i.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN and mode != "custom_level":
                 last_key = "down"
-            elif i.key == pygame.K_SPACE:
+            elif event.key == pygame.K_SPACE and mode != "custom_level":
                 last_key = "space"
-            elif i.key == pygame.K_RETURN:
+            elif event.key == pygame.K_RETURN and mode != "custom_level":
                 last_key = "confirm"
-            elif i.key == pygame.K_1:
+            elif event.key == pygame.K_1 and mode != "custom_level":
                 last_key = "1"
-            elif i.key == pygame.K_2:
+            elif event.key == pygame.K_2 and mode != "custom_level":
                 last_key = "2"
-            elif i.key == pygame.K_3:
-                last_key = "3"            
+            elif event.key == pygame.K_3 and mode != "custom_level":
+                last_key = "3"
+            elif event.key == pygame.K_ESCAPE and mode == "custom_level":
+                mode = "title"              
+            elif event.key == pygame.K_BACKSPACE and mode == "custom_level" or event.key == pygame.K_DELETE and mode == "custom_level":
+                path_custom_level = path_custom_level[:-1]
+            elif event.key == pygame.K_RETURN and mode == "custom_level":
+                try:
+                    path_custom_level = path_custom_level + ".json"
+                    with open(path_custom_level,mode="r") as customlevel_file:
+                        leveldict = json.loads(customlevel_file.read())
+                    mode = "game"
+                    health = 100
+                    ammo = 5
+                    x = 3
+                    y = 1
+                    direction = 1
+                    turn = "player"
+                    bgm_oldoffice.play(-1)
+                    is_custom_level = True
+                except:
+                    pass
+            elif mode == "custom_level":
+                path_custom_level += event.unicode
+                     
