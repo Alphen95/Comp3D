@@ -92,6 +92,7 @@ if kernel == "Windows":
     path_snd_shoot= path_folder + "\\res\\shoot.wav"
     path_bgm_old_office= path_folder + "\\res\\mus_old_office.wav"
     path_localization = path_folder + "\\localization\\translated_comp3d.json"
+    path_wall = path_folder + "\\res\\editor\\wall.png"
 else:
     path_wall_l = path_folder + "/res/wall_left.png"
     path_wall_r = path_folder + "/res/wall_right.png"
@@ -128,6 +129,7 @@ else:
     path_snd_slash = path_folder + "/res/knife_slash.ogg"
     path_snd_achiv1= path_folder + "/res/achivement1.ogg"
     path_snd_shoot= path_folder + "/res/shoot.wav"
+    path_wall = path_folder + "/res/editor/wall.png"
     path_bgm_old_office= path_folder + "/res/mus_old_office.wav"
     path_localization = path_folder + "/localization/translated_comp3d.json"
     
@@ -148,6 +150,7 @@ pygame.display.set_caption('Compystein 3-D Pre-Release')
 sc = pygame.display.set_mode((infoObject.current_w, SIZE * 300), pygame.FULLSCREEN)
 indent_horizontal = int((infoObject.current_w - SIZE * 300) / 2)
 
+image_wall = pygame.image.load(path_wall)
 image_wall_l = pygame.image.load(path_wall_l)
 image_wall_r = pygame.image.load(path_wall_r)
 image_wall_2 = pygame.image.load(path_wall2)
@@ -987,7 +990,7 @@ while 1:
                     length_text = len(enemy_tile_contents)
                     end_of_read = length_text-2
                     enemy_tile_contents = enemy_tile_contents[0:end_of_read]
-                    enemy_tile_contents = enemy_tile_contents + enemy_hp
+                    enemy_tile_contents = enemy_tile_contents + str(enemy_hp)
                     leveldict[coords] = enemy_tile_contents
             damage = 0
                 
@@ -1106,7 +1109,7 @@ while 1:
                 sc.blit(text, [indent_horizontal + SIZE * 5, SIZE * 140])              
         text = small_font.render("Copyright 2020 Alphen95(Luigi180059)", 1, WHITE)
         sc.blit(text, [indent_horizontal + SIZE * 100, SIZE * 240])   
-        text = font.render("Release!", 1, RED)
+        text = font.render("hotfix 1.1", 1, RED)
         text =pygame.transform.rotate(text, 14)
         sc.blit(text, [indent_horizontal + SIZE * 120, SIZE * 60])            
     elif mode == "help":
@@ -1136,7 +1139,29 @@ while 1:
             text = font.render("Menu cofirm : [Enter]", 1, GREEN)
             sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 125])
             text = font.render("Leave game : [Q]", 1, GREEN)
-            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])               
+            sc.blit(text, [indent_horizontal + SIZE * 20, SIZE * 145])  
+    elif mode == "map":
+        sc.fill(GRAY)
+        text = font.render("Level map", 1, GREEN)
+        sc.blit(text, [indent_horizontal + SIZE * 50, SIZE * 10])
+        for i in range(y-2,y+3):
+            for i1 in range(5,0,-1):
+                if i1 == 5:
+                    tile = str(i)+"-"+str(1)
+                elif i1 == 4:
+                    tile = str(i)+"-"+str(2)
+                elif i1 == 3:
+                    tile = str(i)+"-"+str(3)
+                elif i1 == 2:
+                    tile = str(i)+"-"+str(4)
+                elif i1 == 1:
+                    tile = str(i)+"-"+str(5)            
+                print("tile",tile)
+                if i >=1:
+                    tile_contents = leveldict[tile]
+                    if tile_contents == "wall":
+                        sc.blit(pygame.transform.scale(image_wall, (60 * SIZE, 60 * SIZE)), (indent_horizontal+((i1*60-60)*SIZE), indent_horizontal+(((i*60)-60)*SIZE)))
+                
     elif mode == "debug":
         sc.fill(BLACK)
         text = font.render("DEBUG MENU", 1, WHITE)
@@ -1320,7 +1345,12 @@ while 1:
             elif event.key == pygame.K_3 and mode != "custom_level":
                 last_key = "3"
             elif event.key == pygame.K_ESCAPE and mode == "custom_level":
-                mode = "title"              
+                mode = "title"
+            elif event.key == pygame.K_TAB and mode == "game":
+                mode = "map"
+                print("a")
+            elif event.key == pygame.K_TAB and mode == "map":
+                mode = "game"                
             elif event.key == pygame.K_BACKSPACE and mode == "custom_level" or event.key == pygame.K_DELETE and mode == "custom_level":
                 path_custom_level = path_custom_level[:-1]
             elif event.key == pygame.K_RETURN and mode == "custom_level":
